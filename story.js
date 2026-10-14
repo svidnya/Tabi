@@ -326,11 +326,13 @@ function renderCredits(){const box=$("#photo-credits");if(!box)return;const list
 /* departures board: the three ways in */
 function renderBoard(){const box=$("#board");if(!box)return;const F=App.data.trip.flights;const tm=iso=>iso?iso.slice(11,16):"";const dd=iso=>iso?App.fmtDate(iso.slice(0,10),{day:"numeric",month:"short"}):"";
   const f=id=>F.find(x=>x.id===id);const a=f("qr132"),b=f("qr806"),c=f("simone-mxp"),m=f("mathieu-out");
+  /* tra i due codici una piccola freccia disegnata; per i lettori di schermo resta la parola */
+  const leg=(x,y)=>[x,h("span",{class:"arr","aria-hidden":"true",html:(window.ICONS||{}).arrow||""}),h("span",{class:"vh"}," "+t("last.to")+" "),y];
   const rows=[
-    [`${a.from.iata} ${tm(a.dep)}`,`${a.to.iata} → ${b.to.iata} ${tm(b.arr)}`,`${dd(a.dep)}, Vincenzo, Genny, Andrea, Vivienne`],
-    [`${c.from.iata}`,`${c.to.iata} → ${b.to.iata} ${tm(b.arr)}`,`Simone, ${L(c.from.city)}`],
-    [`${m.from.iata} ${tm(m.dep)}`,`${m.via.iata} → ${m.to.iata} ${tm(m.arr)}`,`${dd(m.arr)}, Mathieu`]];
-  box.replaceChildren(h("p",{class:"board-h"},t("board.title")),...rows.map(r=>h("div",{class:"brow"},h("span",{class:"mono"},r[0]),h("span",{class:"mono to"},r[1]),h("span",{class:"who"},r[2]))))}
+    [`${a.from.iata} ${tm(a.dep)}`,leg(a.to.iata,`${b.to.iata} ${tm(b.arr)}`),`${dd(a.dep)}, Vincenzo, Genny, Andrea, Vivienne`],
+    [`${c.from.iata}`,leg(c.to.iata,`${b.to.iata} ${tm(b.arr)}`),`${dd(a.dep)}, Simone, ${L(c.from.city)}`],
+    [`${m.from.iata} ${tm(m.dep)}`,leg(m.via.iata,`${m.to.iata} ${tm(m.arr)}`),`${dd(m.dep)}, Mathieu (${t("board.lands")} ${dd(m.arr)})`]];
+  box.replaceChildren(h("p",{class:"board-h"},t("board.title")),...rows.map(r=>h("div",{class:"brow"},h("span",{class:"mono"},r[0]),h("span",{class:"mono to"},...r[1]),h("span",{class:"who"},r[2]))))}
 /* signature: the brush draws it once when it comes into view, then the seal */
 function bindSignature(){const sig=$(".signature");if(!sig||REDUCED||!("IntersectionObserver" in window))return;sig.classList.add("sig-wait");
   const io=new IntersectionObserver(es=>{if(!es.some(e=>e.isIntersecting))return;io.disconnect();sig.classList.remove("sig-wait");sig.classList.add("sig-go")},{threshold:.6});io.observe(sig)}

@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <!-- l'host dell'artifact apre già il body prima di questo file: manifest e meta per iOS si spostano nell'head, dove i browser li cercano -->
 <script>(function(){try{var hd=document.head;if(!hd)return;document.querySelectorAll('link[rel=manifest],link[rel=apple-touch-icon],link[rel=icon],meta[name=theme-color],meta[name^=apple-mobile-web-app],meta[name=mobile-web-app-capable]').forEach(function(e){if(e.parentNode!==hd)hd.appendChild(e)})}catch(e){}})()</script>
-<meta name="description" content="Il viaggio in Giappone di Vincenzo, Genny, Andrea, Vivienne, Mathieu e Simone, 3–19 novembre 2026.">
+<meta name="description" content="Il viaggio in Giappone di Vincenzo, Genny, Andrea, Vivienne, Mathieu e Simone, 2–19 novembre 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Manrope:wght@400;500;600;700;800&family=Shippori+Mincho+B1:wght@500;800&display=swap">
@@ -142,6 +142,8 @@ main{min-height:100vh}
 @media (max-width:899px){
   .byobu{height:min(46vh,420px)}
   @supports (height:1svh){.byobu{height:min(46svh,420px)}}
+  /* piano F: sotto 720 px di altezza (390×700) il byōbu si accorcia, così la didascalia sotto il timbro resta sopra la barra */
+  @media (max-height:720px){.byobu{height:min(42vh,380px)}@supports (height:1svh){.byobu{height:min(42svh,380px)}}}
   .hero-copy{grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;padding-top:14px;align-items:start}
   .hero .kicker,.hero h1,.hero-copy .board,.hero-copy .scrollcue{grid-column:1/-1}
   .hero .sub{grid-column:1;grid-row:3;align-self:center;line-height:1.2}
@@ -166,6 +168,9 @@ main{min-height:100vh}
 .brow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:2px 14px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.95rem;align-items:baseline}
 .brow .mono{font-size:.85rem;color:var(--ink)}
 .brow .to{color:var(--ink)}
+/* freccia disegnata (icona arrow, 12px) al posto del carattere freccia */
+.arr{display:inline-block;width:12px;height:12px;margin:0 .3em;vertical-align:-1px;flex:none}
+.arr svg{display:block;width:12px;height:12px;stroke-width:3}
 .brow .who{grid-column:1/-1;font-size:.82rem;color:var(--stone)}
 @media (min-width:900px){.board{max-width:620px}.brow{grid-template-columns:9rem minmax(0,1fr) minmax(0,1.2fr)}.brow .who{grid-column:auto}}
 
@@ -1310,7 +1315,7 @@ svg.eki-z[data-ink="shu"]{--st-ink:var(--shu)}svg.eki-z[data-ink="prussian"]{--s
       <div class="scroller" id="scroller">
         <div class="emaki-head">
           <h2 data-i="phases.title"></h2>
-          <p class="route" lang="ja">東京 → 新幹線 → 関西 → 東京</p>
+          <p class="route" lang="ja" aria-label="東京、新幹線、関西、東京">東京<span class="arr" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 16h21M19 9l7 7-7 7"/></svg></span>新幹線<span class="arr" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 16h21M19 9l7 7-7 7"/></svg></span>関西<span class="arr" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 16h21M19 9l7 7-7 7"/></svg></span>東京</p>
           <p class="sub" data-i="phases.sub"></p>
         </div>
         <div class="strip-wrap" id="strip-wrap">
@@ -1393,13 +1398,13 @@ svg.eki-z[data-ink="shu"]{--st-ink:var(--shu)}svg.eki-z[data-ink="prussian"]{--s
 <div class="scrim" id="scrim"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheet-title"><div class="grab"></div><button class="sheet-x" id="sheet-x" type="button" aria-label="Chiudi">✕</button><div id="sheet-body"></div></aside>
 
-<script>window.SITE_V="59"</script>
-<script src="firebase-config.js?v=59"></script>
-<script src="share-firebase.js?v=59"></script>
-<script src="icons.js?v=59"></script>
-<script src="stamps.js?v=59"></script>
-<script src="app.js?v=59"></script>
-<script src="tastes.js?v=59"></script>
-<script src="story.js?v=59"></script>
+<script>window.SITE_V="61"</script>
+<script src="firebase-config.js?v=61"></script>
+<script src="share-firebase.js?v=61"></script>
+<script src="icons.js?v=61"></script>
+<script src="stamps.js?v=61"></script>
+<script src="app.js?v=61"></script>
+<script src="tastes.js?v=61"></script>
+<script src="story.js?v=61"></script>
 
 </body></html>

@@ -336,8 +336,8 @@
    "id": "nex",
    "date": "2026-11-03",
    "label": {
-    "it": "Narita → Shinjuku con il Narita Express (N'EX)",
-    "en": "Narita → Shinjuku on the Narita Express (N'EX)"
+    "it": "Da Narita a Shinjuku con il Narita Express (N'EX)",
+    "en": "Narita to Shinjuku on the Narita Express (N'EX)"
    },
    "line": "nex",
    "booked": false,
@@ -350,8 +350,8 @@
    "id": "shinkansen-out",
    "date": "2026-11-09",
    "label": {
-    "it": "Tokyo → Shin-Ōsaka in Shinkansen",
-    "en": "Tokyo → Shin-Osaka by Shinkansen"
+    "it": "Da Tokyo a Shin-Ōsaka in Shinkansen",
+    "en": "Tokyo to Shin-Osaka by Shinkansen"
    },
    "line": "shinkansen",
    "booked": false,
@@ -364,8 +364,8 @@
    "id": "shinkansen-back",
    "date": "2026-11-16",
    "label": {
-    "it": "Shin-Ōsaka → Tokyo in Shinkansen",
-    "en": "Shin-Osaka → Tokyo by Shinkansen"
+    "it": "Da Shin-Ōsaka a Tokyo in Shinkansen",
+    "en": "Shin-Osaka to Tokyo by Shinkansen"
    },
    "line": "shinkansen",
    "booked": false,
@@ -378,8 +378,8 @@
    "id": "haneda",
    "date": "2026-11-18",
    "label": {
-    "it": "Nakano → Haneda T3",
-    "en": "Nakano → Haneda T3"
+    "it": "Da Nakano a Haneda T3",
+    "en": "Nakano to Haneda T3"
    },
    "line": null,
    "booked": false,
@@ -985,8 +985,8 @@
     },
     {
      "time": null,
-     "it": "Shinkansen Shin-Ōsaka → Tokyo",
-     "en": "Shinkansen Shin-Osaka → Tokyo"
+     "it": "Shinkansen da Shin-Ōsaka a Tokyo",
+     "en": "Shinkansen Shin-Osaka to Tokyo"
     },
     {
      "time": "16:00",

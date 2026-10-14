@@ -119,8 +119,8 @@ const fold=x=>x.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 /* nome corto della zona: prima parte, salvo quando la prima parte è la città (Kobe) */
 const zoneShort=z=>{const n=(L(z.name)||"").split(/ \(|,| and | e | & /)[0],ps=n.split(/\s+\u00b7\s+/);return ps.length>1&&Object.values(CITY_OF).flat().includes(fold(ps[0]))?ps[1]:ps[0]};
 const zoneKanji=z=>(z.name.ja||"").split("・")[0];
-/* nome del sigillo di carta: la prima parte del nome corto ("Dōtonbori – Namba" → Dōtonbori), salvo quando è la città ("Kōbe – Sannomiya" → Sannomiya) */
-const sealName=z=>{const ps=zoneShort(z).split(/\s+[\u2013-]\s+/);return ps.length>1&&Object.values(CITY_OF).flat().includes(fold(ps[0]))?ps[1]:ps[0]};
+/* nome del sigillo di carta: il campo short di zones.json; altrimenti la prima parte del nome corto ("Dōtonbori – Namba" → Dōtonbori), salvo quando è la città ("Kōbe – Sannomiya" → Sannomiya) */
+const sealName=z=>{if(z.short)return z.short;const ps=zoneShort(z).split(/\s+[\u2013-]\s+/);return ps.length>1&&Object.values(CITY_OF).flat().includes(fold(ps[0]))?ps[1]:ps[0]};
 const imgOf=id=>(App.data.images?.images||[]).find(i=>i.id===id);
 const photoSrc=im=>im.file+"?v="+(window.SITE_V||"1");
 /* zone della città con almeno un posto, nell'ordine delle città e poi per numero di posti */
@@ -276,9 +276,9 @@ function grid(G=64){const cells=new Map(),key=(x,y)=>x+"/"+y;
 function declutter(){if(!map)return;const z=$("#map").dataset.z;
   if(z==="city"){const g=grid();for(const zm of zoneMarkers){const el=zm.getElement();el.style.visibility="visible";const r=el.getBoundingClientRect();if(g.hits(r))el.style.visibility="hidden";else g.add(r)}}
   spread(z==="city");
-  /* sigilli di carta delle zone: mai sovrapposti; in ordine di posti, chi sta a meno di 60 px da un sigillo già tenuto si nasconde */
+  /* sigilli di carta delle zone: mai sovrapposti; in ordine di posti, chi sta a meno di 44 px da un sigillo già tenuto si nasconde */
   if(z==="mid"){const kept=[];for(const m of sealMarkers.slice().sort((a,b)=>(b.n||0)-(a.n||0))){m.el.dataset.hide="0";if(!m.n)continue;
-      const pt=map.project([m.z.lng,m.z.lat]);if(kept.some(q=>Math.hypot(q.x-pt.x,q.y-pt.y)<60)){m.el.dataset.hide="1";continue}kept.push(pt)}}
+      const pt=map.project([m.z.lng,m.z.lat]);if(kept.some(q=>Math.hypot(q.x-pt.x,q.y-pt.y)<44)){m.el.dataset.hide="1";continue}kept.push(pt)}}
   if(z==="street"){const g=grid(),W=innerWidth,H=innerHeight,vis=[];
     for(const m of markers){if(m.el.dataset.dim==="1")continue;const r=m.el.btn.getBoundingClientRect();if(r.right<0||r.left>W||r.bottom<0||r.top>H){m.el.pl.dataset.hide="1";continue}g.add(r);vis.push(m)}
     for(const el of document.querySelectorAll("#map .base-m"))if(getComputedStyle(el).display!=="none")g.add(el.getBoundingClientRect());
@@ -346,7 +346,7 @@ function initMapInner(){
       el.addEventListener("click",ev=>{ev.stopPropagation();zoneSheet(z)});const m=new maplibregl.Marker({element:el,anchor:"bottom",offset:[0,-16]}).setLngLat([z.lng,z.lat]).addTo(map);zoneMarkers.push(m)}
     // REVIEW: i nomi oltre 8 lettere si rimpiccioliscono fino a 8 px per stare nel tondo da 56 px (Shimokitazawa), vedi Problemi
     /* sigillo di carta della zona (sotto zoom 12): nome latino e numero dei posti; tocco = vola alla zona, come la striscia */
-    for(const z of D.zones){const nm=sealName(z),len=Math.max(...nm.split(" ").map(w=>w.length));const el=h("button",{class:"zone-seal",type:"button","aria-label":zoneShort(z)},h("b",{style:len>8?{fontSize:Math.max(8,Math.round(880/len)/10)+"px"}:null},nm),h("span",{class:"mono"},""));
+    for(const z of D.zones){const nm=sealName(z),len=Math.max(...nm.split(" ").map(w=>w.length));const el=h("button",{class:"zone-seal",type:"button","aria-label":zoneShort(z)},h("b",{style:len>8?{fontSize:Math.max(10,Math.round(880/len)/10)+"px"}:null},nm),h("span",{class:"mono"},""));
       el.addEventListener("click",ev=>{ev.stopPropagation();flyZone(z)});const m=new maplibregl.Marker({element:el}).setLngLat([z.lng,z.lat]).addTo(map);sealMarkers.push({m,el,z,n:0})}
     zoomClass();refresh();
     }

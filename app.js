@@ -50,7 +50,7 @@ App.sunToday=sunToday;
 /* palette: day or night, no in-between, switched by real sun times in Japan */
 const PAL={
   day:{land:"#F3EEE4",paper:"#F3EEE4",paper2:"#EAE3D5",paper3:"#E0D7C5",ink:"#151515",ink2:"#3A3732",stone:"#6A655C",sea:"#D8DED9",shu:"#D63A1E",eat:"#D9800F",see:"#2E8B6B",night:"#7A5FC2",shop:"#1C83A8",trip:"#8C6A3A",sun:"#E9A23B"},
-  night:{land:"#22304F",paper:"#141E35",paper2:"#1B2745",paper3:"#22304F",ink:"#E9E2D2",ink2:"#C9C2B2",stone:"#8F8C80",sea:"#0E1527",shu:"#E4482A",eat:"#E0A040",see:"#6BBF9A",night:"#C7A3F0",shop:"#6FB4D6",trip:"#D9B27A",sun:"#F2B544"}};
+  night:{land:"#22304F",paper:"#141E35",paper2:"#1B2745",paper3:"#22304F",ink:"#E9E2D2",ink2:"#C9C2B2",stone:"#9B978A",sea:"#0E1527",shu:"#E4482A",eat:"#E0A040",see:"#6BBF9A",night:"#C7A3F0",shop:"#6FB4D6",trip:"#D9B27A",sun:"#F2B544"}};
 function nightness(d=now()){const s=sunToday(d),t=d.getTime(),m=6e4;const r=s.rise.getTime(),st=s.set.getTime();
   if(t<r-30*m||t>st+45*m)return 1;if(t>r+30*m&&t<st-45*m)return 0;if(t<=r+30*m)return 1-(t-(r-30*m))/(60*m);return(t-(st-45*m))/(90*m)}
 App.nightness=nightness;
@@ -357,7 +357,7 @@ function surprisePick(c){const z=ctxZone(c,TD.pos),fx=fixedToday(c);
 /* la casa di stanotte: nei giorni di trasferimento vale già la città d'arrivo (cityAfter), anche al mattino */
 function renderLast(c){const LT=App.data.lasttrain,st=c.inTrip?stayAt(c.tp.date,c.day,1440):c.stay;if(!LT||!st)return null;const opts=LT.bases?.[st.id];if(!opts||!opts.length)return null;
   return h("div",{class:"last",id:"last"},h("div",{class:"sec-h"},h("h2",{},t("last.title")),h("span",{class:"eyebrow"},L(st.name).split(",")[0])),
-    h("div",{class:"last-rows"},opts.map(o=>h("p",{class:"lt"},h("b",{},t("last.about")+" "+o.time),h("span",{},o.line+" → "+o.to+(o.from?", "+t("last.from")+" "+o.from:""))))),
+    h("div",{class:"last-rows"},opts.map(o=>h("p",{class:"lt"},h("b",{},t("last.about")+" "+o.time),h("span",{},o.line+" "+t("last.to")+" "+o.to+(o.from?", "+t("last.from")+" "+o.from:""))))),
     h("p",{class:"lt-note"},t("last.check")))}
 
 /* ── condivisione: ritrovo e "ci sto" (db + user, entrambi facoltativi) ── */

@@ -66,6 +66,8 @@ window.ICONS={
   compass:S('<circle cx="16" cy="16" r="12.5"/><path d="M16 4.5v2M16 25.5v2M4.5 16h2M25.5 16h2"/><path '+R+' d="M21.5 10.5 17.6 17.6 14.4 14.4z"/><path d="M14.4 14.4 10.5 21.5l7.1-3.9"/>'),
   share:S('<path d="M11.5 12.5H8V28h16V12.5h-3.5"/><path d="M16 3.5V20M11 8.5l5-5 5 5"/>'),
   addhome:S('<rect x="5" y="5" width="22" height="22" rx="5"/><path d="M16 10.5v11M10.5 16h11"/>'),
+  /* freccia tra due codici (FCO, DOH) o due nomi: tabellone delle partenze, rotta delle sei fasi */
+  arrow:S('<path d="M5 16h21M19 9l7 7-7 7"/>'),
   rain:S('<path d="M8 19h15a5 5 0 0 0 .5-10 7 7 0 0 0-13.4 1.6A4.3 4.3 0 0 0 8 19z"/><path d="M10 23l-1.5 4M22 23l-1.5 4"/><path '+R+' d="M15.5 22c-2.6 3.2-2.6 6 0 6s2.6-2.8 0-6z"/>')
 };
 })();

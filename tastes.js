@@ -279,9 +279,10 @@ App.stampRow=function(z){if(!(window.STAMPS||{})[z.id])return null;const r=stamp
 function openPage(x){const r=rating(x.rating),p=person(x.who),P=placeOf(x),S=SH(),mine=!x.ex&&!!S.uid&&x.uid===S.uid&&canWrite();TS.delArm=null;
   const del=mine?h("button",{type:"button",class:"tb-del",onclick:async ev=>{const b=ev.currentTarget;
       if(TS.delArm!==x.id){TS.delArm=x.id;b.textContent=t("tastes.delete.sure");b.dataset.armed="1";return}
-      // REVIEW: come da piano si cancella solo il doc; la foto resta tra gli asset dell'artifact (vedi Problemi)
       b.disabled=true;const ok=await App.shWrite(()=>S.db.collection("tastes").doc(x.id).delete());
-      if(ok){TS.list=TS.list.filter(y=>y.id!==x.id);App.closeSheet();render()}else{b.disabled=false;b.textContent=t("tastes.err.save")}}},t("tastes.delete")):null;
+      /* poi la foto (photos/<id> con Firebase, asset dentro claude.ai); se è di un altro o già sparita l'errore si ignora */
+      if(ok){const pid=idOf(x);if(pid&&TS.assets&&typeof TS.assets.delete==="function"){try{await TS.assets.delete(pid)}catch(e){}}
+        TS.list=TS.list.filter(y=>y.id!==x.id);App.closeSheet();render()}else{b.disabled=false;b.textContent=t("tastes.err.save")}}},t("tastes.delete")):null;
   const bigPh=photoEl(x,"tb-ph",true,true);
   const node=h("div",{class:"tbig"},App.bandHanko({eat:"食",see:"見",night:"夜",shop:"買",trip:"旅"}[x.cat]||"味"),
     h("div",{class:"tb-frame"},bigPh,x.ex?h("span",{class:"tp-rib","aria-hidden":"true"},h("span",{},t("tastes.example"))):null),
