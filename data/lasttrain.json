@@ -1,0 +1,19 @@
+{
+  "approx": true,
+  "review": "Orari indicativi, da confermare per novembre 2026 (piano 2026-10-14-oggi). Osaka: la linea Tanimachi non passa da Namba-Nippombashi, valore scritto come da piano.",
+  "bases": {
+    "home-tokyo1": [
+      {"line": "JR Yamanote", "to": "Shin-Ōkubo", "from": "Shinjuku", "time": "00:40"},
+      {"line": "JR Yamanote", "to": "Shin-Ōkubo", "from": "Shibuya", "time": "00:30"},
+      {"line": "Toei Ōedo", "to": "Higashi-Shinjuku", "from": null, "time": "00:20"}
+    ],
+    "home-osaka": [
+      {"line": "Metro Tanimachi", "to": "Tanimachi 4/6-chōme", "from": "Namba-Nippombashi", "time": "00:10"},
+      {"line": "Metro Tanimachi", "to": "Tanimachi 4/6-chōme", "from": "Umeda (Higashi-Umeda)", "time": "00:05"}
+    ],
+    "home-tokyo2": [
+      {"line": "JR Chūō", "to": "Nakano", "from": "Shinjuku", "time": "00:45"},
+      {"line": "Metro Marunouchi", "to": "Shin-Kōenji", "from": null, "time": "00:15"}
+    ]
+  }
+}

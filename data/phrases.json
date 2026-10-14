@@ -1,0 +1,91 @@
+{
+  "survival": [
+    {"id": "s-sumimasen", "ja": "すみません", "romaji": "sumimasen", "it": "Mi scusi (anche per chiamare il cameriere)", "en": "Excuse me (also to call the waiter)"},
+    {"id": "s-arigato", "ja": "ありがとうございます", "romaji": "arigatō gozaimasu", "it": "Grazie", "en": "Thank you"},
+    {"id": "s-kore", "ja": "これをください", "romaji": "kore o kudasai", "it": "Questo, per favore", "en": "This one, please"},
+    {"id": "s-ikura", "ja": "いくらですか", "romaji": "ikura desu ka", "it": "Quanto costa?", "en": "How much is it?"},
+    {"id": "s-toire", "ja": "トイレはどこですか", "romaji": "toire wa doko desu ka", "it": "Dov'è il bagno?", "en": "Where is the toilet?"},
+    {"id": "s-eigo", "ja": "英語のメニューはありますか", "romaji": "eigo no menyū wa arimasu ka", "it": "C'è un menu in inglese?", "en": "Do you have an English menu?"},
+    {"id": "s-card", "ja": "カードで払えますか", "romaji": "kādo de haraemasu ka", "it": "Posso pagare con la carta?", "en": "Can I pay by card?"},
+    {"id": "s-rokunin", "ja": "六人です", "romaji": "rokunin desu", "it": "Siamo in sei", "en": "There are six of us"},
+    {"id": "s-oishii", "ja": "おいしいです", "romaji": "oishii desu", "it": "È buonissimo", "en": "It's delicious"},
+    {"id": "s-kaikei", "ja": "お会計お願いします", "romaji": "okaikei onegaishimasu", "it": "Il conto, per favore", "en": "The bill, please"}
+  ],
+  "emergency": [
+    {"id": "e-police", "number": "110", "it": "Polizia", "en": "Police"},
+    {"id": "e-ambulance", "number": "119", "it": "Ambulanza e vigili del fuoco", "en": "Ambulance and fire"},
+    {"id": "e-tasukete", "ja": "助けてください", "romaji": "tasukete kudasai", "it": "Aiuto, per favore", "en": "Help, please"}
+  ],
+  "byType": {
+    "ticket-machine": [
+      {"ja": "食券はどこで買いますか", "romaji": "shokken wa doko de kaimasu ka", "it": "Dove si compra il biglietto per il piatto?", "en": "Where do I buy the meal ticket?",
+       "note": {"it": "Molti ramen hanno la macchinetta all'ingresso: scegli il tasto, paghi, consegni il biglietto al bancone.", "en": "Many ramen shops have a machine at the door: press the button, pay, hand the ticket to the counter."}},
+      {"ja": "麺はかためでお願いします", "romaji": "men wa katame de onegaishimasu", "it": "Noodles al dente, per favore", "en": "Firm noodles, please", "note": null}
+    ],
+    "omakase": [
+      {"ja": "アレルギーがあります", "romaji": "arerugī ga arimasu", "it": "Ho un'allergia", "en": "I have an allergy",
+       "note": {"it": "Ditelo all'inizio, prima che parta il menu.", "en": "Say it at the start, before the menu begins."}},
+      {"ja": "とてもおいしいです", "romaji": "totemo oishii desu", "it": "È davvero buonissimo", "en": "It's really delicious", "note": null},
+      {"ja": "ごちそうさまでした", "romaji": "gochisōsama deshita", "it": "Grazie per il pasto (alla fine)", "en": "Thank you for the meal (at the end)", "note": null}
+    ],
+    "restaurant": [
+      {"ja": "六人ですが、席はありますか", "romaji": "rokunin desu ga, seki wa arimasu ka", "it": "Siamo in sei, avete posto?", "en": "We're six, do you have seats?", "note": null},
+      {"ja": "おすすめは何ですか", "romaji": "osusume wa nan desu ka", "it": "Cosa ci consiglia?", "en": "What do you recommend?",
+       "note": {"it": "Niente mance: lasciarle mette in imbarazzo.", "en": "No tipping: it makes people uncomfortable."}}
+    ],
+    "club": [
+      {"ja": "入場料はいくらですか", "romaji": "nyūjōryō wa ikura desu ka", "it": "Quanto costa l'ingresso?", "en": "How much is the entry?",
+       "note": {"it": "Portate il passaporto: senza documento non si entra.", "en": "Bring your passport: no ID, no entry."}},
+      {"ja": "ロッカーはありますか", "romaji": "rokkā wa arimasu ka", "it": "C'è un armadietto?", "en": "Is there a locker?", "note": null}
+    ],
+    "temple": [
+      {"ja": "写真を撮ってもいいですか", "romaji": "shashin o totte mo ii desu ka", "it": "Posso fare una foto?", "en": "May I take a photo?",
+       "note": {"it": "Un piccolo inchino sotto il torii, mani lavate alla fontana, voce bassa, niente foto dove c'è il divieto.", "en": "A small bow under the torii, rinse your hands at the fountain, keep your voice down, no photos where signs say so."}}
+    ],
+    "shop": [
+      {"ja": "免税できますか", "romaji": "menzei dekimasu ka", "it": "Si può avere il tax free?", "en": "Can I get tax-free?",
+       "note": {"it": "Sopra ¥5.000 nello stesso negozio, con il passaporto.", "en": "Over ¥5,000 in one shop, with your passport."}},
+      {"ja": "袋はいりません", "romaji": "fukuro wa irimasen", "it": "Non mi serve la busta", "en": "I don't need a bag", "note": null}
+    ],
+    "cafe": [
+      {"ja": "店内でお願いします", "romaji": "tennai de onegaishimasu", "it": "Da consumare qui, per favore", "en": "For here, please", "note": null},
+      {"ja": "持ち帰りでお願いします", "romaji": "mochikaeri de onegaishimasu", "it": "Da portare via, per favore", "en": "To go, please", "note": null}
+    ],
+    "bar": [
+      {"ja": "おすすめの日本酒はありますか", "romaji": "osusume no nihonshu wa arimasu ka", "it": "Ha un sake da consigliarci?", "en": "Any sake you'd recommend?",
+       "note": {"it": "Spesso c'è un coperto con uno stuzzichino (otōshi): è normale.", "en": "There's often a cover charge with a small snack (otoshi): that's normal."}},
+      {"ja": "乾杯！", "romaji": "kanpai!", "it": "Cin cin!", "en": "Cheers!", "note": null}
+    ],
+    "onsen": [
+      {"ja": "タトゥーがありますが、入れますか", "romaji": "tatū ga arimasu ga, hairemasu ka", "it": "Ho un tatuaggio, posso entrare?", "en": "I have a tattoo, can I go in?",
+       "note": {"it": "Ci si lava seduti prima di entrare in vasca, e l'asciugamano non va nell'acqua.", "en": "Wash sitting down before getting in, and the towel never goes in the water."}}
+    ],
+    "market": [
+      {"ja": "一つください", "romaji": "hitotsu kudasai", "it": "Uno, per favore", "en": "One, please", "note": null},
+      {"ja": "ここで食べてもいいですか", "romaji": "koko de tabete mo ii desu ka", "it": "Posso mangiarlo qui?", "en": "Can I eat it here?",
+       "note": {"it": "Non si mangia camminando: si mangia davanti al banco.", "en": "Don't eat while walking: eat in front of the stall."}}
+    ],
+    "station": [
+      {"ja": "このホームで合っていますか", "romaji": "kono hōmu de atte imasu ka", "it": "È il binario giusto?", "en": "Is this the right platform?",
+       "note": {"it": "Sui treni si parla piano e niente telefonate.", "en": "On trains keep your voice down and no phone calls."}}
+    ]
+  },
+  "daily": {
+    "p-nex": {"ja": "成田エクスプレスはどこですか", "romaji": "Narita Ekusupuresu wa doko desu ka", "it": "Dov'è il Narita Express?", "en": "Where is the Narita Express?"},
+    "p-six": {"ja": "六人です", "romaji": "rokunin desu", "it": "Siamo in sei", "en": "There are six of us"},
+    "p-gochiso": {"ja": "ごちそうさまでした", "romaji": "gochisōsama deshita", "it": "Grazie per il pasto", "en": "Thank you for the meal"},
+    "p-kanpai": {"ja": "乾杯！", "romaji": "kanpai!", "it": "Cin cin!", "en": "Cheers!"},
+    "p-entry": {"ja": "入場料はいくらですか", "romaji": "nyūjōryō wa ikura desu ka", "it": "Quanto costa l'ingresso?", "en": "How much is the entry?"},
+    "p-kore": {"ja": "これをください", "romaji": "kore o kudasai", "it": "Questo, per favore", "en": "This one, please"},
+    "p-seats": {"ja": "指定席を六枚ください", "romaji": "shiteiseki o rokumai kudasai", "it": "Sei posti riservati, per favore", "en": "Six reserved seats, please"},
+    "p-kirei": {"ja": "きれい！", "romaji": "kirei!", "it": "Che bello!", "en": "Beautiful!"},
+    "p-photo": {"ja": "写真を撮ってもいいですか", "romaji": "shashin o totte mo ii desu ka", "it": "Posso fare una foto?", "en": "May I take a photo?"},
+    "p-senbei": {"ja": "鹿せんべいをください", "romaji": "shika senbei o kudasai", "it": "Dei cracker per i cervi, per favore", "en": "Deer crackers, please"},
+    "p-osusume": {"ja": "おすすめは何ですか", "romaji": "osusume wa nan desu ka", "it": "Cosa ci consiglia?", "en": "What do you recommend?"},
+    "p-wish": {"ja": "願いが叶いますように", "romaji": "negai ga kanaimasu yō ni", "it": "Che il desiderio si avveri", "en": "May the wish come true"},
+    "p-tattoo": {"ja": "タトゥーがありますが、入れますか", "romaji": "tatū ga arimasu ga, hairemasu ka", "it": "Ho un tatuaggio, posso entrare?", "en": "I have a tattoo, can I go in?"},
+    "p-tokyo6": {"ja": "東京まで六枚ください", "romaji": "Tōkyō made rokumai kudasai", "it": "Sei biglietti per Tokyo, per favore", "en": "Six tickets to Tokyo, please"},
+    "p-fuji": {"ja": "富士山が見えますか", "romaji": "Fujisan ga miemasu ka", "it": "Si vede il Fuji?", "en": "Can you see Mount Fuji?"},
+    "p-mata": {"ja": "また来ます", "romaji": "mata kimasu", "it": "Tornerò", "en": "I'll be back"}
+  }
+}

@@ -1,0 +1,1047 @@
+{
+ "meta": {
+  "title": {
+   "it": "Giappone 2026",
+   "en": "Japan 2026",
+   "ja": "日本 2026"
+  },
+  "start": "2026-11-03",
+  "end": "2026-11-18",
+  "landing": "2026-11-03T17:55:00+09:00",
+  "tz": "Asia/Tokyo",
+  "people": [
+   {
+    "id": "vincenzo",
+    "name": "Vincenzo",
+    "lang": "it"
+   },
+   {
+    "id": "genny",
+    "name": "Genny",
+    "lang": "it"
+   },
+   {
+    "id": "andrea",
+    "name": "Andrea",
+    "lang": "it"
+   },
+   {
+    "id": "vivienne",
+    "name": "Vivienne",
+    "lang": "en"
+   },
+   {
+    "id": "mathieu",
+    "name": "Mathieu",
+    "lang": "it"
+   },
+   {
+    "id": "simone",
+    "name": "Simone",
+    "lang": "it"
+   }
+  ],
+  "guide": {
+   "name": "Luca",
+   "note": {
+    "it": "Vive in Giappone. Forse ci raggiunge in Kansai tra il 13 e il 16 novembre (non confermato).",
+    "en": "Lives in Japan. He may join us in Kansai between 13 and 16 November (not confirmed)."
+   }
+  }
+ },
+ "flights": [
+  {
+   "id": "qr132",
+   "group": [
+    "vincenzo",
+    "genny",
+    "andrea",
+    "vivienne"
+   ],
+   "code": "QR132",
+   "airline": "Qatar Airways",
+   "from": {
+    "iata": "FCO",
+    "city": {
+     "it": "Roma Fiumicino",
+     "en": "Rome Fiumicino"
+    },
+    "lat": 41.8003,
+    "lng": 12.2389
+   },
+   "dep": "2026-11-02T15:10:00+01:00",
+   "to": {
+    "iata": "DOH",
+    "city": {
+     "it": "Doha",
+     "en": "Doha"
+    },
+    "lat": 25.2731,
+    "lng": 51.6081
+   },
+   "arr": "2026-11-02T22:20:00+03:00"
+  },
+  {
+   "id": "simone-mxp",
+   "group": [
+    "simone"
+   ],
+   "code": null,
+   "airline": "Qatar Airways",
+   "from": {
+    "iata": "MXP",
+    "city": {
+     "it": "Milano Malpensa",
+     "en": "Milan Malpensa"
+    },
+    "lat": 45.6306,
+    "lng": 8.7281
+   },
+   "dep": null,
+   "to": {
+    "iata": "DOH",
+    "city": {
+     "it": "Doha",
+     "en": "Doha"
+    },
+    "lat": 25.2731,
+    "lng": 51.6081
+   },
+   "arr": null,
+   "note": {
+    "it": "Simone parte da Malpensa e ci raggiunge a Doha.",
+    "en": "Simone flies from Malpensa and meets us in Doha."
+   }
+  },
+  {
+   "id": "qr806",
+   "group": [
+    "vincenzo",
+    "genny",
+    "andrea",
+    "vivienne",
+    "simone"
+   ],
+   "code": "QR806",
+   "airline": "Qatar Airways",
+   "from": {
+    "iata": "DOH",
+    "city": {
+     "it": "Doha",
+     "en": "Doha"
+    },
+    "lat": 25.2731,
+    "lng": 51.6081
+   },
+   "dep": "2026-11-03T01:50:00+03:00",
+   "to": {
+    "iata": "NRT",
+    "city": {
+     "it": "Tokyo Narita T2",
+     "en": "Tokyo Narita T2"
+    },
+    "lat": 35.7731,
+    "lng": 140.3862
+   },
+   "arr": "2026-11-03T17:55:00+09:00"
+  },
+  {
+   "id": "mathieu-out",
+   "group": [
+    "mathieu"
+   ],
+   "code": null,
+   "airline": "Lufthansa / ANA",
+   "from": {
+    "iata": "GOT",
+    "city": {
+     "it": "Göteborg",
+     "en": "Gothenburg"
+    },
+    "lat": 57.6628,
+    "lng": 12.2798
+   },
+   "dep": "2026-11-03T06:00:00+01:00",
+   "via": {
+    "iata": "MUC",
+    "city": {
+     "it": "Monaco di Baviera",
+     "en": "Munich"
+    },
+    "lat": 48.3538,
+    "lng": 11.7861
+   },
+   "to": {
+    "iata": "HND",
+    "city": {
+     "it": "Tokyo Haneda",
+     "en": "Tokyo Haneda"
+    },
+    "lat": 35.5494,
+    "lng": 139.7798
+   },
+   "arr": "2026-11-04T06:55:00+09:00"
+  },
+  {
+   "id": "mathieu-back",
+   "group": [
+    "mathieu"
+   ],
+   "code": null,
+   "airline": "Lufthansa / ANA",
+   "from": {
+    "iata": "HND",
+    "city": {
+     "it": "Tokyo Haneda",
+     "en": "Tokyo Haneda"
+    },
+    "lat": 35.5494,
+    "lng": 139.7798
+   },
+   "dep": "2026-11-18T22:45:00+09:00",
+   "via": {
+    "iata": "FRA",
+    "city": {
+     "it": "Francoforte",
+     "en": "Frankfurt"
+    },
+    "lat": 50.0379,
+    "lng": 8.5622
+   },
+   "to": {
+    "iata": "GOT",
+    "city": {
+     "it": "Göteborg",
+     "en": "Gothenburg"
+    },
+    "lat": 57.6628,
+    "lng": 12.2798
+   },
+   "arr": "2026-11-19T11:00:00+01:00"
+  },
+  {
+   "id": "qr813",
+   "group": [
+    "vincenzo",
+    "genny",
+    "andrea",
+    "vivienne",
+    "simone"
+   ],
+   "code": "QR813",
+   "airline": "Qatar Airways",
+   "from": {
+    "iata": "HND",
+    "city": {
+     "it": "Tokyo Haneda T3",
+     "en": "Tokyo Haneda T3"
+    },
+    "lat": 35.5442,
+    "lng": 139.7686
+   },
+   "dep": "2026-11-19T00:25:00+09:00",
+   "to": {
+    "iata": "DOH",
+    "city": {
+     "it": "Doha",
+     "en": "Doha"
+    },
+    "lat": 25.2731,
+    "lng": 51.6081
+   },
+   "arr": "2026-11-19T06:50:00+03:00"
+  },
+  {
+   "id": "qr-home",
+   "group": [
+    "vincenzo",
+    "genny",
+    "andrea",
+    "vivienne",
+    "simone"
+   ],
+   "code": null,
+   "airline": "Qatar Airways",
+   "from": {
+    "iata": "DOH",
+    "city": {
+     "it": "Doha",
+     "en": "Doha"
+    },
+    "lat": 25.2731,
+    "lng": 51.6081
+   },
+   "dep": "2026-11-19T09:30:00+03:00",
+   "to": {
+    "iata": "FCO",
+    "city": {
+     "it": "Roma",
+     "en": "Rome"
+    },
+    "lat": 41.8003,
+    "lng": 12.2389
+   },
+   "arr": "2026-11-19T13:30:00+01:00"
+  }
+ ],
+ "stays": [
+  {
+   "id": "home-tokyo1",
+   "from": "2026-11-03",
+   "to": "2026-11-09",
+   "city": "tokyo",
+   "name": {
+    "it": "Tokyo, Shinjuku (Ōkubo / Hyakuninchō)",
+    "en": "Tokyo, Shinjuku (Okubo / Hyakunincho)"
+   },
+   "address": "1-chōme-22-24 Hyakuninchō",
+   "note": {
+    "it": "Casa tradizionale grande, 4 bagni, 2 minuti dalla metro",
+    "en": "Big traditional house, 4 bathrooms, 2 minutes from the subway"
+   },
+   "checkin": "15:00",
+   "checkout": "10:00"
+  },
+  {
+   "id": "home-osaka",
+   "from": "2026-11-09",
+   "to": "2026-11-16",
+   "city": "osaka",
+   "name": {
+    "it": "Osaka, Chūō-ku (Tanimachi)",
+    "en": "Osaka, Chuo-ku (Tanimachi)"
+   },
+   "address": "8-12 Ryūzōjichō",
+   "note": null,
+   "checkin": "15:00",
+   "checkout": "11:00"
+  },
+  {
+   "id": "home-tokyo2",
+   "from": "2026-11-16",
+   "to": "2026-11-18",
+   "city": "tokyo",
+   "name": {
+    "it": "Tokyo, Nakano",
+    "en": "Tokyo, Nakano"
+   },
+   "address": "zona Nakano / Higashi-Kōenji",
+   "note": null,
+   "checkin": "16:00",
+   "checkout": "10:00"
+  }
+ ],
+ "transfers": [
+  {
+   "id": "nex",
+   "date": "2026-11-03",
+   "label": {
+    "it": "Narita → Shinjuku con il Narita Express (N'EX)",
+    "en": "Narita → Shinjuku on the Narita Express (N'EX)"
+   },
+   "line": "nex",
+   "booked": false,
+   "note": {
+    "it": "Circa 1 ora e 24 minuti, ¥3.330 a testa.",
+    "en": "About 1h24, ¥3,330 per person."
+   }
+  },
+  {
+   "id": "shinkansen-out",
+   "date": "2026-11-09",
+   "label": {
+    "it": "Tokyo → Shin-Ōsaka in Shinkansen",
+    "en": "Tokyo → Shin-Osaka by Shinkansen"
+   },
+   "line": "shinkansen",
+   "booked": false,
+   "note": {
+    "it": "Non ancora prenotato. Nozomi circa 2 ore e 22 minuti, ~¥14.520.",
+    "en": "Not booked yet. Nozomi about 2h22, ~¥14,520."
+   }
+  },
+  {
+   "id": "shinkansen-back",
+   "date": "2026-11-16",
+   "label": {
+    "it": "Shin-Ōsaka → Tokyo in Shinkansen",
+    "en": "Shin-Osaka → Tokyo by Shinkansen"
+   },
+   "line": "shinkansen",
+   "booked": false,
+   "note": {
+    "it": "Non ancora prenotato.",
+    "en": "Not booked yet."
+   }
+  },
+  {
+   "id": "haneda",
+   "date": "2026-11-18",
+   "label": {
+    "it": "Nakano → Haneda T3",
+    "en": "Nakano → Haneda T3"
+   },
+   "line": null,
+   "booked": false,
+   "note": {
+    "it": "Circa 60–70 minuti in treno. Il gruppo vola alle 00:25: in aeroporto entro le 22:00. Mathieu vola alle 22:45: parte verso le 19:30.",
+    "en": "About 60–70 minutes by train. The group flies at 00:25: be at the airport by 22:00. Mathieu flies at 22:45: he leaves around 19:30."
+   }
+  }
+ ],
+ "bookings": [
+  {
+   "id": "b-hanare",
+   "place": "hajime-hanare-nihonbashi",
+   "date": "2026-11-05",
+   "time": "20:00",
+   "who": "all",
+   "by": "Vivienne",
+   "label": {
+    "it": "Tonkatsu Hajime HANARE, degustazione di 16 portate",
+    "en": "Tonkatsu Hajime HANARE, 16-course tasting"
+   },
+   "where": {
+    "it": "Nihonbashi, Tokyo",
+    "en": "Nihonbashi, Tokyo"
+   }
+  },
+  {
+   "id": "b-biyori",
+   "place": "sushi-biyori",
+   "date": "2026-11-06",
+   "time": "20:00",
+   "who": "all",
+   "by": "Vincenzo",
+   "label": {
+    "it": "Sushi Biyori, omakase di 18 portate, sala privata, drink inclusi",
+    "en": "Sushi Biyori, 18-course omakase, private room, drinks included"
+   },
+   "where": {
+    "it": "Shinjuku, Tokyo",
+    "en": "Shinjuku, Tokyo"
+   }
+  },
+  {
+   "id": "b-mappa",
+   "place": "mappa-expo-15th",
+   "date": "2026-11-09",
+   "time": "12:00",
+   "who": [
+    "vincenzo",
+    "genny"
+   ],
+   "by": "Vincenzo",
+   "label": {
+    "it": "MAPPA, mostra dello studio di animazione (solo Vincenzo e Genny)",
+    "en": "MAPPA, animation studio exhibition (Vincenzo and Genny only)"
+   },
+   "where": {
+    "it": "Tokyo",
+    "en": "Tokyo"
+   }
+  },
+  {
+   "id": "b-teamlab",
+   "place": "teamlab-biovortex",
+   "date": "2026-11-10",
+   "time": "14:00",
+   "who": "all",
+   "by": "Vivienne",
+   "label": {
+    "it": "teamLab Biovortex",
+    "en": "teamLab Biovortex"
+   },
+   "where": {
+    "it": "Kyoto",
+    "en": "Kyoto"
+   }
+  },
+  {
+   "id": "b-hikiniku",
+   "place": "hikiniku-to-come-kyoto",
+   "date": "2026-11-10",
+   "time": "18:30",
+   "who": "all",
+   "by": "Vivienne",
+   "label": {
+    "it": "Hikiniku to Come, hamburg alla brace con riso",
+    "en": "Hikiniku to Come, charcoal hamburg steak with rice"
+   },
+   "where": {
+    "it": "Kyoto",
+    "en": "Kyoto"
+   }
+  }
+ ],
+ "pending": [
+  {
+   "id": "p-shibuya-sky",
+   "place": "shibuya-sky",
+   "status": "booking",
+   "label": {
+    "it": "Shibuya Sky al tramonto, in prenotazione",
+    "en": "Shibuya Sky at sunset, booking in progress"
+   },
+   "note": {
+    "it": "I biglietti escono 14 giorni prima e finiscono subito. Tramonto verso le 16:30. Promemoria per la prenotazione: 21 ottobre. Per la prima settimana a Tokyo.",
+    "en": "Tickets are released 14 days ahead and sell out at once. Sunset around 16:30. Booking reminder: 21 October. For the first Tokyo week."
+   },
+   "reminders": [
+    "2026-10-21"
+   ]
+  },
+  {
+   "id": "p-hachigou",
+   "place": "ginza-hachigou",
+   "status": "idea",
+   "label": {
+    "it": "Ginza Hachigou, prenotazioni il sabato alle 9 di Tokyo",
+    "en": "Ginza Hachigou, bookings Saturday 9am Tokyo time"
+   },
+   "note": {
+    "it": "TableCheck apre ogni sabato alle 9:00 ora di Tokyo per i giorni da martedì a domenica successivi, ¥500 a persona. La finestra di sabato 7 novembre copre giorni in cui saremo in Kansai: non serve.",
+    "en": "TableCheck opens every Saturday at 9:00 Tokyo time for the following Tuesday to Sunday, ¥500 per person. The Saturday 7 November window covers days we'll be in Kansai: skip it."
+   },
+   "url": "https://www.tablecheck.com/shops/ginza-hachigou/reserve",
+   "reminders": [
+    {
+     "at": "2026-10-31T09:00:00+09:00",
+     "it": "Sabato 31 ottobre, 9:00 di Tokyo (01:00 in Italia): prenota per il 4–8 novembre (Tokyo I)",
+     "en": "Saturday 31 October, 9:00 Tokyo (01:00 Italy): book for 4–8 November (Tokyo I)"
+    },
+    {
+     "at": "2026-11-14T09:00:00+09:00",
+     "it": "Sabato 14 novembre, 9:00 di Tokyo: prenota per il 17–18 novembre (Tokyo II)",
+     "en": "Saturday 14 November, 9:00 Tokyo: book for 17–18 November (Tokyo II)"
+    }
+   ]
+  },
+  {
+   "id": "p-katsugyu",
+   "place": "gyukatsu-katsugyu-shibuya-dogenzaka",
+   "status": "idea",
+   "label": {
+    "it": "Gyukatsu Katsugyu Shibuya, prenota la mattina stessa",
+    "en": "Gyukatsu Katsugyu Shibuya, book the same morning"
+   },
+   "note": {
+    "it": "Prenotazione solo per lo stesso giorno su TableCheck. Alternative: Kyoto (Pontochō) e Osaka (Shinsaibashi).",
+    "en": "Same-day reservations only on TableCheck. Alternatives: Kyoto (Pontocho) and Osaka (Shinsaibashi)."
+   },
+   "url": "https://www.tablecheck.com/gyukatsu-kyotokatsugyu-shibuya-dogenzaka"
+  },
+  {
+   "id": "p-usj",
+   "place": "usj",
+   "status": "idea",
+   "label": {
+    "it": "Universal Studios Japan / Super Nintendo World",
+    "en": "Universal Studios Japan / Super Nintendo World"
+   },
+   "note": {
+    "it": "Biglietto base ~€50, oppure ~€83 con Express e accesso garantito a Nintendo World. Non il 10 novembre: è già pieno.",
+    "en": "Base ticket ~€50, or ~€83 with Express and guaranteed Nintendo World entry. Not on 10 November: that day is full."
+   }
+  },
+  {
+   "id": "p-kamakura",
+   "place": "kamakura-day-trip",
+   "status": "idea",
+   "label": {
+    "it": "Kamakura, gita di un giorno, prima settimana a Tokyo",
+    "en": "Kamakura, day trip, first Tokyo week"
+   },
+   "note": null
+  },
+  {
+   "id": "p-fuji",
+   "place": "mt-fuji-day-tour",
+   "status": "idea",
+   "label": {
+    "it": "Monte Fuji in bus con guida (~€40, Klook), idea per il 17 novembre",
+    "en": "Mt Fuji bus tour with guide (~€40, Klook), idea for 17 November"
+   },
+   "note": null
+  },
+  {
+   "id": "p-daytrips",
+   "place": null,
+   "status": "idea",
+   "label": {
+    "it": "Nara, Kobe e Uji, gite dal Kansai, 20–40 minuti di treno",
+    "en": "Nara, Kobe and Uji, Kansai day trips, 20–40 minutes by train"
+   },
+   "note": null
+  },
+  {
+   "id": "p-ghibli",
+   "place": "ghibli-museum",
+   "status": "idea",
+   "label": {
+    "it": "Museo Ghibli, biglietti di novembre in vendita dal 10 ottobre",
+    "en": "Ghibli Museum, November tickets on sale since 10 October"
+   },
+   "note": null
+  },
+  {
+   "id": "p-nintendo",
+   "place": "nintendo-museum",
+   "status": "missed",
+   "label": {
+    "it": "Nintendo Museum, esaurito, occasione persa",
+    "en": "Nintendo Museum, sold out, the one that got away"
+   },
+   "note": null
+  }
+ ],
+ "phases": [
+  {
+   "id": "arrival",
+   "from": "2026-11-02",
+   "to": "2026-11-03",
+   "kanji": "旅",
+   "kana": "たび",
+   "romaji": "tabi",
+   "name": {
+    "it": "Arrivo",
+    "en": "Arrival"
+   },
+   "line": {
+    "it": "Roma, Milano e Göteborg partono separati e si ritrovano in Giappone.",
+    "en": "Rome, Milan and Gothenburg leave separately and meet up in Japan."
+   }
+  },
+  {
+   "id": "tokyo1",
+   "from": "2026-11-03",
+   "to": "2026-11-09",
+   "kanji": "東京",
+   "kana": "とうきょう",
+   "romaji": "Tōkyō",
+   "stay": "home-tokyo1",
+   "city": "tokyo",
+   "name": {
+    "it": "Tokyo I",
+    "en": "Tokyo I"
+   },
+   "line": {
+    "it": "Sei notti a Shinjuku: neon, ramen, due cene prenotate e tutto il resto da scegliere.",
+    "en": "Six nights in Shinjuku: neon, ramen, two booked dinners and everything else up for grabs."
+   }
+  },
+  {
+   "id": "shinkansen",
+   "from": "2026-11-09",
+   "to": "2026-11-09",
+   "kanji": "新幹線",
+   "kana": "しんかんせん",
+   "romaji": "shinkansen",
+   "name": {
+    "it": "Shinkansen",
+    "en": "Shinkansen"
+   },
+   "line": {
+    "it": "515 chilometri a 285 all'ora, con il Fuji a destra se il cielo collabora.",
+    "en": "515 kilometres at 285 km/h, with Fuji on the right if the sky cooperates."
+   }
+  },
+  {
+   "id": "kansai",
+   "from": "2026-11-09",
+   "to": "2026-11-16",
+   "kanji": "関西",
+   "kana": "かんさい",
+   "romaji": "Kansai",
+   "stay": "home-osaka",
+   "city": "osaka",
+   "name": {
+    "it": "Kansai",
+    "en": "Kansai"
+   },
+   "line": {
+    "it": "Base a Osaka, gite a Kyoto, Nara, Kobe e Uji: templi la mattina, okonomiyaki la sera.",
+    "en": "Based in Osaka, trips to Kyoto, Nara, Kobe and Uji: temples by morning, okonomiyaki by night."
+   }
+  },
+  {
+   "id": "tokyo2",
+   "from": "2026-11-16",
+   "to": "2026-11-18",
+   "kanji": "中野",
+   "kana": "なかの",
+   "romaji": "Nakano",
+   "stay": "home-tokyo2",
+   "city": "tokyo",
+   "name": {
+    "it": "Tokyo II",
+    "en": "Tokyo II"
+   },
+   "line": {
+    "it": "Ultimi giorni a Nakano: izakaya di quartiere, vintage e forse il Fuji.",
+    "en": "Last days in Nakano: neighbourhood izakaya, vintage and maybe Fuji."
+   }
+  },
+  {
+   "id": "return",
+   "from": "2026-11-18",
+   "to": "2026-11-19",
+   "kanji": "帰",
+   "kana": "かえる",
+   "romaji": "kaeru",
+   "name": {
+    "it": "Ritorno",
+    "en": "Home"
+   },
+   "line": {
+    "it": "La sera del 18 si va a Haneda. Mathieu parte un paio d'ore prima di noi.",
+    "en": "On the evening of the 18th we head to Haneda. Mathieu leaves a couple of hours before us."
+   }
+  }
+ ],
+ "days": [
+  {
+   "date": "2026-11-03",
+   "phase": "arrival",
+   "city": "tokyo",
+   "kanji": "旅",
+   "kana": "たび",
+   "romaji": "tabi",
+   "meaning": {
+    "it": "viaggio",
+    "en": "journey"
+   },
+   "events": [
+    {
+     "time": "17:55",
+     "it": "Atterraggio a Narita T2 (QR806)",
+     "en": "Landing at Narita T2 (QR806)",
+     "who": [
+      "vincenzo",
+      "genny",
+      "andrea",
+      "vivienne",
+      "simone"
+     ]
+    },
+    {
+     "time": null,
+     "it": "Narita Express fino a Shinjuku, poi casa (check-in dalle 15:00)",
+     "en": "Narita Express to Shinjuku, then home (check-in from 15:00)"
+    }
+   ],
+   "phrase": "p-nex"
+  },
+  {
+   "date": "2026-11-04",
+   "phase": "tokyo1",
+   "city": "tokyo",
+   "kanji": "街",
+   "kana": "まち",
+   "romaji": "machi",
+   "meaning": {
+    "it": "città, quartiere",
+    "en": "town, neighbourhood"
+   },
+   "events": [
+    {
+     "time": "06:55",
+     "it": "Mathieu atterra a Haneda e ci raggiunge",
+     "en": "Mathieu lands at Haneda and joins us",
+     "who": [
+      "mathieu"
+     ]
+    }
+   ],
+   "phrase": "p-six"
+  },
+  {
+   "date": "2026-11-05",
+   "phase": "tokyo1",
+   "city": "tokyo",
+   "kanji": "豚",
+   "kana": "ぶた",
+   "romaji": "buta",
+   "meaning": {
+    "it": "maiale (stasera 16 portate)",
+    "en": "pork (16 courses tonight)"
+   },
+   "events": [
+    {
+     "time": "20:00",
+     "it": "Tonkatsu Hajime HANARE, Nihonbashi",
+     "en": "Tonkatsu Hajime HANARE, Nihonbashi",
+     "booking": "b-hanare"
+    }
+   ],
+   "phrase": "p-gochiso"
+  },
+  {
+   "date": "2026-11-06",
+   "phase": "tokyo1",
+   "city": "tokyo",
+   "kanji": "乾杯",
+   "kana": "かんぱい",
+   "romaji": "kanpai",
+   "meaning": {
+    "it": "cin cin",
+    "en": "cheers"
+   },
+   "events": [
+    {
+     "time": "20:00",
+     "it": "Sushi Biyori, omakase, Shinjuku",
+     "en": "Sushi Biyori, omakase, Shinjuku",
+     "booking": "b-biyori"
+    }
+   ],
+   "phrase": "p-kanpai"
+  },
+  {
+   "date": "2026-11-07",
+   "phase": "tokyo1",
+   "city": "tokyo",
+   "kanji": "夜",
+   "kana": "よる",
+   "romaji": "yoru",
+   "meaning": {
+    "it": "notte (è sabato)",
+    "en": "night (it's Saturday)"
+   },
+   "events": [],
+   "phrase": "p-entry"
+  },
+  {
+   "date": "2026-11-08",
+   "phase": "tokyo1",
+   "city": "tokyo",
+   "kanji": "縁",
+   "kana": "えん",
+   "romaji": "en",
+   "meaning": {
+    "it": "legame, il filo che unisce le persone",
+    "en": "bond, the thread that ties people together"
+   },
+   "events": [],
+   "phrase": "p-kore"
+  },
+  {
+   "date": "2026-11-09",
+   "phase": "shinkansen",
+   "city": "tokyo",
+   "cityAfter": {
+    "time": "15:00",
+    "city": "osaka"
+   },
+   "kanji": "新幹線",
+   "kana": "しんかんせん",
+   "romaji": "shinkansen",
+   "meaning": {
+    "it": "treno proiettile",
+    "en": "bullet train"
+   },
+   "events": [
+    {
+     "time": "10:00",
+     "it": "Check-out da Shinjuku, valigie in deposito",
+     "en": "Check-out from Shinjuku, luggage into storage"
+    },
+    {
+     "time": "12:00",
+     "it": "MAPPA, solo Vincenzo e Genny. Gli altri: mattina libera a Tokyo",
+     "en": "MAPPA, Vincenzo and Genny only. Everyone else: free morning in Tokyo",
+     "booking": "b-mappa"
+    },
+    {
+     "time": null,
+     "it": "Pomeriggio: tutti insieme in Shinkansen verso Shin-Ōsaka",
+     "en": "Afternoon: all together on the Shinkansen to Shin-Osaka"
+    },
+    {
+     "time": "15:00",
+     "it": "Check-in a Osaka dalle 15:00",
+     "en": "Osaka check-in from 15:00"
+    }
+   ],
+   "phrase": "p-seats"
+  },
+  {
+   "date": "2026-11-10",
+   "phase": "kansai",
+   "city": "kyoto",
+   "kanji": "光",
+   "kana": "ひかり",
+   "romaji": "hikari",
+   "meaning": {
+    "it": "luce",
+    "en": "light"
+   },
+   "events": [
+    {
+     "time": "14:00",
+     "it": "teamLab Biovortex, Kyoto",
+     "en": "teamLab Biovortex, Kyoto",
+     "booking": "b-teamlab"
+    },
+    {
+     "time": "18:30",
+     "it": "Hikiniku to Come, Kyoto",
+     "en": "Hikiniku to Come, Kyoto",
+     "booking": "b-hikiniku"
+    }
+   ],
+   "phrase": "p-kirei"
+  },
+  {
+   "date": "2026-11-11",
+   "phase": "kansai",
+   "city": "kyoto",
+   "kanji": "紅葉",
+   "kana": "こうよう",
+   "romaji": "kōyō",
+   "meaning": {
+    "it": "le foglie rosse d'autunno",
+    "en": "red autumn leaves"
+   },
+   "events": [],
+   "phrase": "p-photo"
+  },
+  {
+   "date": "2026-11-12",
+   "phase": "kansai",
+   "city": "nara",
+   "kanji": "鹿",
+   "kana": "しか",
+   "romaji": "shika",
+   "meaning": {
+    "it": "cervo",
+    "en": "deer"
+   },
+   "events": [],
+   "phrase": "p-senbei"
+  },
+  {
+   "date": "2026-11-13",
+   "phase": "kansai",
+   "city": "osaka",
+   "kanji": "食",
+   "kana": "しょく",
+   "romaji": "shoku",
+   "meaning": {
+    "it": "mangiare (a Osaka si mangia fino a crollare)",
+    "en": "eating (in Osaka you eat till you drop)"
+   },
+   "events": [],
+   "phrase": "p-osusume"
+  },
+  {
+   "date": "2026-11-14",
+   "phase": "kansai",
+   "city": "osaka",
+   "kanji": "勝",
+   "kana": "かつ",
+   "romaji": "katsu",
+   "meaning": {
+    "it": "vittoria",
+    "en": "victory"
+   },
+   "events": [],
+   "phrase": "p-wish"
+  },
+  {
+   "date": "2026-11-15",
+   "phase": "kansai",
+   "city": "osaka",
+   "kanji": "湯",
+   "kana": "ゆ",
+   "romaji": "yu",
+   "meaning": {
+    "it": "acqua calda, bagno termale",
+    "en": "hot water, hot bath"
+   },
+   "events": [],
+   "phrase": "p-tattoo"
+  },
+  {
+   "date": "2026-11-16",
+   "phase": "tokyo2",
+   "city": "osaka",
+   "cityAfter": {
+    "time": "15:00",
+    "city": "tokyo"
+   },
+   "kanji": "東",
+   "kana": "ひがし",
+   "romaji": "higashi",
+   "meaning": {
+    "it": "est (si torna a Tokyo)",
+    "en": "east (back to Tokyo)"
+   },
+   "events": [
+    {
+     "time": "11:00",
+     "it": "Check-out da Osaka",
+     "en": "Check-out from Osaka"
+    },
+    {
+     "time": null,
+     "it": "Shinkansen Shin-Ōsaka → Tokyo",
+     "en": "Shinkansen Shin-Osaka → Tokyo"
+    },
+    {
+     "time": "16:00",
+     "it": "Check-in a Nakano dalle 16:00",
+     "en": "Nakano check-in from 16:00"
+    }
+   ],
+   "phrase": "p-tokyo6"
+  },
+  {
+   "date": "2026-11-17",
+   "phase": "tokyo2",
+   "city": "tokyo",
+   "kanji": "富士",
+   "kana": "ふじ",
+   "romaji": "Fuji",
+   "meaning": {
+    "it": "il monte Fuji",
+    "en": "Mount Fuji"
+   },
+   "events": [],
+   "phrase": "p-fuji"
+  },
+  {
+   "date": "2026-11-18",
+   "phase": "return",
+   "city": "tokyo",
+   "kanji": "感謝",
+   "kana": "かんしゃ",
+   "romaji": "kansha",
+   "meaning": {
+    "it": "gratitudine",
+    "en": "gratitude"
+   },
+   "events": [
+    {
+     "time": "10:00",
+     "it": "Check-out da Nakano",
+     "en": "Check-out from Nakano"
+    },
+    {
+     "time": "19:30",
+     "it": "Mathieu parte per Haneda (vola alle 22:45)",
+     "en": "Mathieu leaves for Haneda (flies at 22:45)",
+     "who": [
+      "mathieu"
+     ]
+    },
+    {
+     "time": "22:00",
+     "it": "Tutti a Haneda T3 (QR813 alle 00:25 del 19)",
+     "en": "Everyone at Haneda T3 (QR813 at 00:25 on the 19th)"
+    }
+   ],
+   "phrase": "p-mata"
+  }
+ ]
+}

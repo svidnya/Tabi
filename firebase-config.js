@@ -1,0 +1,2 @@
+/* configurazione web di Firebase (progetto tabi-ad927): è pubblica per natura, la protezione sta nelle regole (firebase/*.rules) */
+window.FIREBASE_CONFIG={apiKey:"AIzaSyBTQhNnqLgf9HdPLmL0n8RJyVp1JDho91o",authDomain:"tabi-ad927.firebaseapp.com",projectId:"tabi-ad927",storageBucket:"tabi-ad927.firebasestorage.app",messagingSenderId:"617575393557",appId:"1:617575393557:web:97f92df45ee9dbba41e11c"};

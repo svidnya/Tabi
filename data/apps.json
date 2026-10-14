@@ -1,0 +1,200 @@
+[
+ {
+  "id": "maps",
+  "kanji": "図",
+  "name": "Google Maps",
+  "why": {
+   "it": "Treni e metro con binario e carrozza giusta; salvate la lista condivisa.",
+   "en": "Trains and subway with the right platform and car; save the shared list."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "App Store",
+     "en": "App Store"
+    },
+    "href": "https://apps.apple.com/app/id585027354"
+   }
+  ]
+ },
+ {
+  "id": "translate",
+  "kanji": "訳",
+  "name": "Google Translate",
+  "why": {
+   "it": "Fotocamera sui menu e sui cartelli; scaricate il giapponese offline.",
+   "en": "Point the camera at menus and signs; download Japanese for offline use."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "App Store",
+     "en": "App Store"
+    },
+    "href": "https://apps.apple.com/app/id414706506"
+   }
+  ]
+ },
+ {
+  "id": "suica",
+  "kanji": "札",
+  "name": "Suica",
+  "why": {
+   "it": "La carta per metro, treni, konbini e distributori: si crea nel Wallet dell'iPhone e si ricarica con la carta.",
+   "en": "The card for subway, trains, konbini and vending machines: create it in the iPhone Wallet and top it up by card."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "Wallet",
+     "en": "Wallet"
+    },
+    "href": "https://support.apple.com/HT207155"
+   }
+  ]
+ },
+ {
+  "id": "smartex",
+  "kanji": "新",
+  "name": "smartEX",
+  "why": {
+   "it": "Biglietti dello Shinkansen Tokyo–Osaka dal telefono, con carta straniera; il 9 novembre.",
+   "en": "Tokyo–Osaka Shinkansen tickets from your phone, with a foreign card; on 9 November."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "Sito",
+     "en": "Website"
+    },
+    "href": "https://smart-ex.jp/en/"
+   }
+  ]
+ },
+ {
+  "id": "go",
+  "kanji": "車",
+  "name": "GO",
+  "why": {
+   "it": "L'app dei taxi in Giappone: funziona con la carta.",
+   "en": "The taxi app in Japan: works with your card."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "Sito",
+     "en": "Website"
+    },
+    "href": "https://go.goinc.jp/en"
+   }
+  ]
+ },
+ {
+  "id": "uber",
+  "kanji": "車",
+  "name": "Uber",
+  "why": {
+   "it": "Riserva per i taxi se GO non trova nessuno; a Tokyo chiama taxi normali.",
+   "en": "Backup for taxis when GO finds no one; in Tokyo it calls regular cabs."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "Sito",
+     "en": "Website"
+    },
+    "href": "https://www.uber.com/jp/en/"
+   }
+  ]
+ },
+ {
+  "id": "tabelog",
+  "kanji": "食",
+  "name": "Tabelog",
+  "why": {
+   "it": "Le recensioni dei giapponesi: sopra 3,5 è un ottimo posto. Sito in inglese, app in giapponese.",
+   "en": "Reviews by Japanese diners: above 3.5 is a very good place. English website, Japanese app."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "Sito",
+     "en": "Website"
+    },
+    "href": "https://tabelog.com/en/"
+   }
+  ]
+ },
+ {
+  "id": "bounce",
+  "kanji": "荷",
+  "name": "Bounce",
+  "why": {
+   "it": "Deposito bagagli in negozi e hotel, prenotato dal telefono: utile il 9 novembre tra check-out e Shinkansen.",
+   "en": "Luggage storage in shops and hotels, booked from your phone: handy on 9 November between check-out and Shinkansen."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "Sito",
+     "en": "Website"
+    },
+    "href": "https://bounce.com/"
+   }
+  ]
+ },
+ {
+  "id": "chargespot",
+  "kanji": "電",
+  "name": "ChargeSPOT",
+  "why": {
+   "it": "Power bank a noleggio nei konbini e nelle stazioni, si restituisce ovunque.",
+   "en": "Rental power banks in konbini and stations; return them anywhere."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "App Store",
+     "en": "App Store"
+    },
+    "href": "https://apps.apple.com/app/id1272481966"
+   }
+  ]
+ },
+ {
+  "id": "flush",
+  "kanji": "便",
+  "name": "Flush",
+  "why": {
+   "it": "Trova il bagno pubblico più vicino.",
+   "en": "Finds the nearest public toilet."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "App Store",
+     "en": "App Store"
+    },
+    "href": "https://apps.apple.com/app/id955254528"
+   }
+  ]
+ },
+ {
+  "id": "mymizu",
+  "kanji": "水",
+  "name": "mymizu",
+  "why": {
+   "it": "Fontanelle e bar dove riempire la borraccia gratis.",
+   "en": "Fountains and cafés where you can refill your bottle for free."
+  },
+  "links": [
+   {
+    "label": {
+     "it": "Sito",
+     "en": "Website"
+    },
+    "href": "https://www.mymizu.co/"
+   }
+  ]
+ }
+]
