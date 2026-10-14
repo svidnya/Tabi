@@ -102,7 +102,7 @@ const DISHK={ramen:"麺",sushi:"鮨",tonkatsu:"豚",gyukatsu:"牛",wagyu:"牛",y
 /* famiglie fisse dei generi (v42), condivise da Mappa e Assaggi: [chiave, chiavi dish/icon che contiene]; icona = prima chiave */
 App.FAMILIES={
   eat:[["noodle",["ramen","soba"]],["fish",["sushi","tempura"]],["meat",["wagyu","yakiniku","yakitori","tonkatsu","gyukatsu","hamburg","kushikatsu","gyoza"]],["street",["okonomiyaki","takoyaki","onigiri","omurice","sando"]],["sweet",["sweets","cafe"]],["market",["market"]],["izakaya",["izakaya","sake","bar","whisky"]]],
-  see:[["temple",["temple","shrine"]],["garden",["garden","park"]],["view",["view"]],["museum",["museum","castle"]],["street",["street","market"]],["onsen",["onsen"]],["shops",["shop","records","vintage","books","game"]],["trip",["train","ferry","bus"]]],
+  see:[["temple",["temple","shrine"]],["garden",["garden","park"]],["view",["view"]],["museum",["museum","castle"]],["street",["street","market"]],["onsen",["onsen"]],["sport",["gym"]],["shops",["shop","records","vintage","books","game"]],["trip",["train","ferry","bus"]]],
   night:[["izakaya",["izakaya"]],["bar",["bar","sake","whisky"]],["club",["club"]],["karaoke",["karaoke"]]]};
 App.catColor=c=>`var(--c-${c})`;
 App.isBooked=p=>p.booking==="booked";

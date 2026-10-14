@@ -51,6 +51,8 @@ window.ICONS={
   vintage:S('<path d="M16 7c0-2 2-3 3-2"/><path d="M16 7 4 12h24z"/><path d="M8 12l-4 4 3 3 2-2v11h14V17l2 2 3-3-4-4"/><path d="M13 12l3 4 3-4"/>'),
   books:S('<path d="M16 8c-3-2-8-3-12-2v18c4-1 9 0 12 2 3-2 8-3 12-2V6c-4-1-9 0-12 2z"/><path d="M16 8v18"/><path '+R+' d="M21 6.5h3v8l-1.5-1.5-1.5 1.5z"/>'),
   game:S('<path d="M5 22h22v6H5z"/><path d="M16 22v-9"/><circle '+R+' cx="16" cy="9" r="4"/><path d="M22 22v-2M9 25h3"/>'),
+  /* sport */
+  gym:S('<path d="M10 16h12M2 16h2M28 16h2"/><rect x="7" y="9" width="3" height="14" rx="1"/><rect x="22" y="9" width="3" height="14" rx="1"/><rect x="4" y="12" width="3" height="8" rx="1"/><rect x="25" y="12" width="3" height="8" rx="1"/>'),
   /* spostamenti */
   train:S('<path d="M3 22h17c5 0 8-2 9-5-3-3-8-5-14-5H3"/><path d="M21 13c2 0 4 1 5 3h-6z"/><path d="M6 16h3M12 16h3"/><path d="M3 26h26"/>'),
   ferry:S('<path d="M3 20h26l-4 6H7z"/><path d="M9 20v-5h12v5"/><path '+R+' d="M13 15v-5h4v5z"/><path d="M3 29c2-1 4 1 6 0s4 1 6 0 4 1 6 0 4 1 6 0"/>'),
