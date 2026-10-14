@@ -370,7 +370,9 @@ async function shareInit(){if(SH.state!=="off")return;SH.state="loading";
     SH.state="on";shareWatch();renderShared()}catch(e){SH.state="none"}
   finally{document.dispatchEvent(new Event("shareready"))}}
 /* una sola sottoscrizione per il ritrovo di oggi e una per le adesioni di oggi; si rifanno solo quando cambia la data */
-function shareWatch(){if(SH.state!=="on")return;const date=tokyoParts(now()).date;if(SH.date===date)return;
+/* prima del viaggio le adesioni valgono per il giorno 1 (la prima sera), dopo il viaggio non ce ne sono */
+function rsvpDate(){try{const c=dayCtx();return c.before?c.days[0].date:c.tp.date}catch(e){return tokyoParts(now()).date}}
+function shareWatch(){if(SH.state!=="on")return;const date=rsvpDate();if(SH.date===date)return;
   SH.unsub.forEach(f=>{try{f()}catch(e){}});SH.unsub=[];SH.date=date;SH.meetOk=false;SH.meet=null;SH.rsvp=[];SH.rsvpOk=false;
   try{SH.unsub.push(SH.db.doc("meet/"+date).onSnapshot(s=>{SH.meetOk=true;SH.meet=s.exists?s.data():null;renderShared()},()=>{SH.meetOk=false;renderShared()}))}catch(e){}
   try{SH.unsub.push(SH.db.collection("rsvp").where("date","==",date).onSnapshot(s=>{SH.rsvpOk=true;SH.rsvp=s.docs.map(x=>x.data());renderShared()},()=>{SH.rsvpOk=false;renderShared()}))}catch(e){}}
@@ -378,26 +380,34 @@ const canWrite=()=>SH.state==="on"&&SH.can!==false&&!SH.ro;
 const canJoin=()=>canWrite()&&!!SH.uid;
 /* Assaggi (tastes.js) riusa la stessa condivisione */
 App.SH=SH;App.canWrite=canWrite;App.shareInit=shareInit;
-const whoFor=place=>SH.rsvp.filter(r=>r&&r.place===place&&r.on).map(r=>r.uid).filter(Boolean);
+const joinedFor=place=>SH.rsvp.filter(r=>r&&r.place===place&&r.on&&r.uid);
+const whoFor=place=>joinedFor(place).map(r=>r.uid);
 App.shWrite=(fn)=>shWrite(fn);
 async function shWrite(fn,again=true){try{await fn();SH.err="";return true}catch(e){const code=e&&e.code;
   if(again&&(code==="unavailable"||code==="resource_exhausted")){await new Promise(r=>setTimeout(r,400+Math.random()*600));return shWrite(fn,false)}
   if(code==="invalid_argument"||code==="not_granted"||code==="capability_disabled"||code==="capability_removed"||code==="revoked")SH.ro=true;else SH.err=t("meet.error");
   renderShared();return false}}
-function toggleJoin(place){if(!canJoin())return;const date=SH.date,on=!whoFor(place).includes(SH.uid);
-  return shWrite(()=>SH.db.collection("rsvp").doc(`${date}_${place}_${SH.uid}`).set({date,place,uid:SH.uid,on,at:Date.now()}))}
+/* chi non ha ancora scelto il nome (people/<uid> vuoto) passa prima dal "Chi sei?" di Assaggi, poi l'adesione si completa */
+function toggleJoin(place){if(!canJoin())return;
+  const me=App.whoMe?App.whoMe():null;if(!me&&App.openWho){App.openWho(()=>{App.closeSheet();toggleJoin(place)});return}
+  const date=SH.date,on=!whoFor(place).includes(SH.uid),rec={date,place,uid:SH.uid,on,at:Date.now()};if(me)rec.who=me;
+  return shWrite(()=>SH.db.collection("rsvp").doc(`${date}_${place}_${SH.uid}`).set(rec))}
 /* iniziali: nomi risolti al momento, mai salvati */
 // REVIEW: piano D, si ridisegna sempre dopo profiles(): con due render ravvicinati il primo aggiornava SH.names e il secondo riquadro (quello visibile) restava a "?" (vedi Problemi)
-function initialsEl(ids){const box=h("span",{class:"ini"});const draw=()=>box.replaceChildren(...ids.map(id=>{const nm=SH.names[id]||"";return h("span",{class:"in",title:nm||"?"},(nm[0]||"?").toUpperCase())}));draw();
-  if(ids.length&&SH.user&&typeof SH.user.profiles==="function"){SH.user.profiles(ids).then(ps=>{for(const id of ids)SH.names[id]=ps?.[id]?.name||"";draw()}).catch(()=>{})}
+/* il nome viene dal "Chi sei?" (campo who dell'adesione, o il proprio scelto), altrimenti dal profilo; senza nome nessuna iniziale, mai "?" */
+function initialsEl(recs){const box=h("span",{class:"ini"});const me=App.whoMe?App.whoMe():null,pn=id=>App.personName?App.personName(id):"";
+  const nameOf=r=>pn(r.who)||(r.uid===SH.uid&&me?pn(me):"")||SH.names[r.uid]||"";
+  const draw=()=>box.replaceChildren(...recs.map(r=>{const nm=nameOf(r);return nm?h("span",{class:"in",title:nm},nm[0].toUpperCase()):null}).filter(Boolean));draw();
+  const need=recs.filter(r=>!pn(r.who)&&!(r.uid===SH.uid&&me)).map(r=>r.uid);
+  if(need.length&&SH.user&&typeof SH.user.profiles==="function"){SH.user.profiles(need).then(ps=>{for(const id of need)SH.names[id]=ps?.[id]?.name||"";draw()}).catch(()=>{})}
   return box}
 function rsvpEl(place,kind){const box=h("div",{class:"who-row","data-rsvp":place,"data-kind":kind});fillRsvp(box);return box}
 function fillRsvp(box){const place=box.dataset.rsvp,kind=box.dataset.kind,c=dayCtx();
-  if(SH.state!=="on"||!SH.rsvpOk||!c.inTrip){box.hidden=true;box.replaceChildren();return}
-  const ids=whoFor(place),mine=!!SH.uid&&ids.includes(SH.uid);
+  if(SH.state!=="on"||!SH.rsvpOk||c.after){box.hidden=true;box.replaceChildren();return}
+  const recs=joinedFor(place),ids=recs.map(r=>r.uid),mine=!!SH.uid&&ids.includes(SH.uid);
   if(!ids.length&&!canJoin()){box.hidden=true;box.replaceChildren();return}
   box.hidden=false;
-  box.replaceChildren(...[h("span",{class:"who-l"},t(kind==="meet"?"meet.who":"next.who")),initialsEl(ids),
+  box.replaceChildren(...[h("span",{class:"who-l"},t(kind==="meet"?"meet.who":"next.who")),initialsEl(recs),
     canJoin()?h("button",{type:"button",class:"join","aria-pressed":String(mine),onclick:()=>toggleJoin(place)},t(kind==="meet"?"meet.arrive":"next.join")):null].filter(Boolean))}
 function renderMeet(c){const box=h("div",{class:"meet",id:"meet"});fillMeet(box,c);return box}
 function fillMeet(box,c=dayCtx()){

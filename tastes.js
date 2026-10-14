@@ -398,5 +398,7 @@ function render(){const box=$("#tastes");if(!box)return;const all=allTastes();
     TS.list.length?null:previewEl()].filter(Boolean));
   if(TS.fresh)setTimeout(()=>{TS.fresh=null},900);if(TS.freshStamp)setTimeout(()=>{TS.freshStamp=null},900)}
 App.renderTastes=function(){init();render()};
+/* "Chi sei?" e il nome scelto, anche per il "Ci sto" di Oggi */
+App.openWho=openWho;App.whoMe=()=>TS.me||null;App.personName=id=>(person(id)||{}).name||"";
 App.tastesDebug=()=>({PEOPLE,RATINGS,familyOf,podium,filterTastes,avgRating,resizeImage,preparePhoto,currentPhase,examples,exampleStamps,suggestions,searchPlaces,TS,canPost,stampZones,stampPodium,zoneIn});
 })();
