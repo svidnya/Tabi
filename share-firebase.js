@@ -1,8 +1,8 @@
 /* Giappone 2026 — condivisione della versione installabile (piano D).
    Fuori da claude.ai il sito non ha window.claude: qui se ne definisce uno con la stessa forma (db, user, assets; vedi tests/claude_mock.js),
-   sopra Firebase (Firestore, accesso anonimo, Storage). L'SDK si carica da gstatic con import() solo alla prima use(), quindi dentro claude.ai
+   sopra Firebase (Firestore e accesso anonimo; niente Storage, che chiede il piano a pagamento: le foto stanno in Firestore, photos/<id>). L'SDK si carica da gstatic con import() solo alla prima use(), quindi dentro claude.ai
    (window.claude già presente o hostname con "claude") non si carica nulla. use() non rifiuta mai: senza rete o senza Firebase risolve null
-   e il sito degrada come oggi. Percorsi identici a quelli del sito (rsvp/<id>, tastes/<id>, stamps/<id>, people/<uid>, meet/<data>). */
+   e il sito degrada come oggi. Percorsi identici a quelli del sito (rsvp/<id>, tastes/<id>, stamps/<id>, people/<uid>, meet/<data>, photos/<id>). */
 (function(){
 "use strict";
 const CFG=window.FIREBASE_CONFIG;
@@ -17,21 +17,21 @@ const DB_CODES={"permission-denied":"invalid_argument","invalid-argument":"inval
 const OURS=new Set(["invalid_argument","resource_exhausted","quota_exceeded","unavailable","revoked","not_granted"]);
 const dbErr=e=>e&&OURS.has(e.code)?e:err(DB_CODES[String(e&&e.code||"").replace(/^firestore\//,"")]||"unavailable",e&&e.message);
 const report=x=>{try{(window.reportError||console.error)(x)}catch(e){}};
-const ST_CODES={"storage/unauthorized":"not_granted","storage/unauthenticated":"not_granted","storage/quota-exceeded":"quota_or_state","storage/retry-limit-exceeded":"store_unavailable","storage/canceled":"store_unavailable","storage/invalid-argument":"invalid_request","storage/object-not-found":"invalid_request"};
-const stErr=e=>err(ST_CODES[e&&e.code]||"upstream_error",e&&e.message);
+/* errori degli asset (foto in Firestore) nella forma di assets di claude.ai */
+const AS_CODES={"permission-denied":"not_granted","unauthenticated":"not_granted","resource-exhausted":"quota_or_state","invalid-argument":"invalid_request","unavailable":"store_unavailable","deadline-exceeded":"store_unavailable"};
+const asErr=e=>err(AS_CODES[String(e&&e.code||"").replace(/^firestore\//,"")]||"upstream_error",e&&e.message);
 
 /* ── caricamento unico: SDK, app, accesso anonimo persistente ── */
 let boot=null;
 function load(){if(boot)return boot;
   boot=Promise.race([(async()=>{
-    const [A,F,U,S]=await Promise.all(["firebase-app","firebase-firestore","firebase-auth","firebase-storage"].map(n=>import(SDK+n+".js")));
+    const [A,F,U]=await Promise.all(["firebase-app","firebase-firestore","firebase-auth"].map(n=>import(SDK+n+".js")));
     const app=A.initializeApp(CFG),fs=F.getFirestore(app),auth=U.getAuth(app);
-    let st=null;try{st=S.getStorage(app)}catch(e){st=null}
     /* il primo onAuthStateChanged dice se c'è già un accesso salvato su questo telefono; se no, accesso anonimo */
     let user=await new Promise(res=>{let done=false,off=null;const fin=u=>{if(done)return;done=true;res(u||null);if(off)off();else setTimeout(()=>off&&off(),0)};off=U.onAuthStateChanged(auth,fin,()=>fin(null))});
     if(!user)user=(await U.signInAnonymously(auth)).user;
     if(!user||!user.uid)throw new Error("accesso anonimo senza uid");
-    return{F,S,fs,st,uid:user.uid}})(),
+    return{F,fs,uid:user.uid}})(),
     new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),LOAD_MS))])
   .catch(e=>{console.info("condivisione Firebase non disponibile",e&&e.message||"");return null});
   return boot}
@@ -110,24 +110,30 @@ function makeUser(B){const{F,fs,uid}=B;let names=new Map(),ready=null;
     me:async()=>{const p=await prof(uid);return Object.freeze({id:uid,name:p.name,avatarUrl:p.avatarUrl,color:p.color,email:null,isOwner:false,canEdit:false})},
     profiles:async ids=>{const list=[...new Set([].concat(ids==null?[]:ids).map(String))];const out={};await Promise.all(list.map(async id=>{out[id]=await prof(id)}));return out}})}
 
-/* ── assets: Firebase Storage uploads/<uid>/<id>.<ext>, url = getDownloadURL ── */
+/* ── assets: un doc Firestore per foto, photos/<id> = {uid, data:<data URL>, contentType, sizeBytes, at}; url = il data URL ──
+   Firestore tiene al più 1 MiB per doc: il data URL resta sotto 1.000.000 caratteri (la regola lo controlla); tastes.js manda foto di al più 220 KB. */
 const TYPES={"image/jpeg":"jpg","image/png":"png","image/gif":"gif","image/webp":"webp"};
-const MAX=8*1024*1024;
+const MAX_DATA=1000000;
 const hex=()=>{const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("")};
-function makeAssets(B){const{S,st,uid}=B;if(!st)return null;const mine=new Map();
-  const at=(id,ext)=>S.ref(st,`uploads/${uid}/${id}.${ext}`);
+const toDataUrl=(blob,type)=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).replace(/^data:[^;,]*/,"data:"+type));r.onerror=()=>rej(r.error||new Error("read"));r.readAsDataURL(blob)});
+function makeAssets(B){const{F,fs,uid}=B;const mine=new Map();
+  const at=id=>F.doc(fs,"photos/"+id);
   return Object.freeze({
     upload:async(blob,opt={})=>{if(!(blob instanceof Blob)||!blob.size)throw err("invalid_request","not a blob");const type=(opt&&opt.type)||blob.type;
-      if(!TYPES[type])throw err("unsupported_type",type||"empty");if(blob.size>MAX)throw err("too_large","over 8 MiB");
-      const id=hex();let url;try{const r=at(id,TYPES[type]);await S.uploadBytes(r,blob,{contentType:type});url=await S.getDownloadURL(r)}catch(e){throw stErr(e)}
-      mine.set(id,{url,type,size:blob.size,ext:TYPES[type],at:new Date().toISOString()});return{id,url,sizeBytes:blob.size,contentType:type}},
-    // REVIEW: list() minimo: solo i caricamenti di questa visita (il sito non lo usa)
-    list:async()=>({assets:[...mine].map(([id,a])=>({id,url:a.url,contentType:a.type,sizeBytes:a.size,createdAt:a.at})),usage:{files:mine.size,bytes:[...mine.values()].reduce((s,a)=>s+a.size,0),maxFiles:1000,maxBytes:1e9}}),
-    delete:async ref=>{const s=String(ref||"");const m=s.match(/([0-9a-f]{32})/);if(!m)throw err("invalid_request","not an asset id");const id=m[1];
-      if(typeof S.deleteObject!=="function")return{deleted:false};
-      const exts=mine.has(id)?[mine.get(id).ext]:Object.values(TYPES);
-      for(const ext of exts){try{await S.deleteObject(at(id,ext));mine.delete(id);return{deleted:true}}catch(e){if(e&&e.code==="storage/object-not-found")continue;throw e&&e.code==="storage/unauthorized"?err("not_uploader",e.message):stErr(e)}}
-      return{deleted:false}}})}
+      if(!TYPES[type])throw err("unsupported_type",type||"empty");
+      let data;try{data=await toDataUrl(blob,type)}catch(e){throw err("invalid_request","unreadable blob")}
+      if(data.length>=MAX_DATA)throw err("too_large","over 1 MB as data URL");
+      const id=hex(),when=new Date().toISOString();
+      try{await settle(F.setDoc(at(id),{uid,data,contentType:type,sizeBytes:blob.size,at:Date.now()}))}catch(e){throw asErr(e)}
+      mine.set(id,{type,size:blob.size,at:when});return{id,url:data,sizeBytes:blob.size,contentType:type}},
+    // REVIEW: list() minimo: solo i caricamenti di questa visita, senza url (il sito non lo usa)
+    list:async()=>({assets:[...mine].map(([id,a])=>({id,url:null,contentType:a.type,sizeBytes:a.size,createdAt:a.at})),usage:{files:mine.size,bytes:[...mine.values()].reduce((s,a)=>s+a.size,0),maxFiles:1000,maxBytes:1e9}}),
+    /* cancella photos/<id> solo se il campo uid è il proprio */
+    delete:async ref=>{const m=String(ref||"").match(/([0-9a-f]{32})/);if(!m)throw err("invalid_request","not an asset id");const id=m[1];
+      let s;try{s=await F.getDoc(at(id))}catch(e){throw asErr(e)}
+      const d=s&&(typeof s.exists==="function"?s.exists():s.exists)?s.data():null;if(!d)return{deleted:false};
+      if(d.uid!==uid)throw err("not_uploader","not your photo");
+      try{await settle(F.deleteDoc(at(id)))}catch(e){throw asErr(e)}mine.delete(id);return{deleted:true}}})}
 
 /* ── window.claude: stessa forma di quello di claude.ai ── */
 const NS={};

@@ -38,14 +38,26 @@ function filterTastes(ts,idx={}){return ts.filter(x=>(!idx.who||x.who===idx.who)
   .sort((a,b)=>(!!a.ex-!!b.ex)||(b.at||0)-(a.at||0))}
 /* voto medio come uno dei tre hanko */
 function avgRating(ts){const s=ts.map(x=>rating(x.rating)?.score).filter(Boolean);if(!s.length)return null;const m=s.reduce((a,b)=>a+b,0)/s.length;return m>=2.5?"zeppin":m>=1.5?"umai":"futsu"}
-/* foto: lato lungo al massimo 1400 px, JPEG 0.82, orientamento EXIF applicato */
-async function resizeImage(file,max=1400,q=.82){let src,w,hh,done=()=>{};
-  try{const bm=await createImageBitmap(file,{imageOrientation:"from-image"});src=bm;w=bm.width;hh=bm.height;done=()=>{try{bm.close()}catch(e){}}}
+/* foto (piano E): lato lungo 1000 px, JPEG 0,72, al più 220 KB (se no 800 px e 0,65); miniatura 320 px, al più 28 KB, per righe del libro e podio.
+   Orientamento EXIF applicato; il file si decodifica una volta sola. */
+const PH_MAX=220*1024,TH_MAX=28*1024;
+async function decodeImage(file){
+  try{const bm=await createImageBitmap(file,{imageOrientation:"from-image"});return{src:bm,w:bm.width,h:bm.height,done:()=>{try{bm.close()}catch(e){}}}}
   catch(e){const url=URL.createObjectURL(file);const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error("image"));i.src=url});
-    src=img;w=img.naturalWidth;hh=img.naturalHeight;done=()=>URL.revokeObjectURL(url)}
-  const s=Math.min(1,max/Math.max(w,hh)),cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(hh*s));
-  const c=document.createElement("canvas");c.width=cw;c.height=ch;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,cw,ch);x.imageSmoothingQuality="high";x.drawImage(src,0,0,cw,ch);done();
+    return{src:img,w:img.naturalWidth,h:img.naturalHeight,done:()=>URL.revokeObjectURL(url)}}}
+async function jpegOf(im,max,q){const s=Math.min(1,max/Math.max(im.w,im.h)),cw=Math.max(1,Math.round(im.w*s)),ch=Math.max(1,Math.round(im.h*s));
+  const c=document.createElement("canvas");c.width=cw;c.height=ch;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,cw,ch);x.imageSmoothingQuality="high";x.drawImage(im.src,0,0,cw,ch);
   const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",q));if(!blob)throw new Error("toBlob");return blob}
+async function resizeImage(file,max=1000,q=.72){const im=await decodeImage(file);try{return await jpegOf(im,max,q)}finally{im.done()}}
+const dataUrlOf=blob=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=()=>rej(r.error||new Error("read"));r.readAsDataURL(blob)});
+/* {blob: foto intera, thumb: data URL della miniatura} */
+async function preparePhoto(file){const im=await decodeImage(file);
+  try{let blob=await jpegOf(im,1000,.72);if(blob.size>PH_MAX)blob=await jpegOf(im,800,.65);
+    // REVIEW: se anche a 800 px / 0,65 supera 220 KB si scende ancora (640 px / 0,55): il piano non dice cosa fare oltre il secondo tentativo
+    if(blob.size>PH_MAX)blob=await jpegOf(im,640,.55);
+    let tb=null;for(const[m,q]of[[320,.7],[320,.55],[320,.42],[240,.42]]){tb=await jpegOf(im,m,q);if(tb.size<=TH_MAX)break}
+    return{blob,thumb:await dataUrlOf(tb)}}
+  finally{im.done()}}
 /* fase corrente secondo la data di Tokyo (come Oggi): la fase del giorno del viaggio, fuori dal viaggio nessuna */
 function currentPhase(d=App.now()){const date=App.tokyoParts(d).date;const day=(App.data.trip?.days||[]).find(x=>x.date===date);return day?day.phase:null}
 
@@ -70,7 +82,7 @@ function exampleStamps(){return EX_STAMPS.flatMap(([zone,who,at])=>who.map((w,i)
 
 /* ───────── stato ───────── */
 const TS={list:[],ok:false,stamps:[],stampsOk:false,me:null,assets:null,init:false,watching:false,unsub:[],idx:{},page:"book",ex:ss.get("tastesEx")==="1",
-  busy:false,urls:{},fresh:null,freshStamp:null,delArm:null,local:{},trial:{},offer:{},locating:null};
+  busy:false,urls:{},full:{},fresh:null,freshStamp:null,delArm:null,local:{},trial:{},offer:{},locating:null};
 /* timbri senza condivisione: {zona:{at,gps}} su questo telefono; le vecchie chiavi delle fasi (v53) si ignorano */
 try{const o=JSON.parse(ls.get("tastesStamps")||"{}")||{};for(const[k,v]of Object.entries(o)){if(!(window.STAMPS||{})[k])continue;TS.local[k]=typeof v==="number"?{at:v,gps:false}:{at:+v.at||0,gps:!!v.gps}}}catch(e){TS.local={}}
 const SH=()=>App.SH||{};
@@ -88,7 +100,7 @@ const visible=()=>{const v=$("#v-tastes");return v&&!v.hidden};
 function watch(){const S=SH();if(TS.watching||S.state!=="on"||!S.db)return;TS.watching=true;
   const redraw=()=>{if(visible())render()};
   try{TS.unsub.push(S.db.collection("tastes").orderBy("at","desc").limit(500).onSnapshot(s=>{TS.ok=true;
-    TS.list=s.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(x=>rating(x.rating)&&typeof x.asset==="string");if(!TS.me&&S.uid){const mine=TS.list.find(x=>x.uid===S.uid&&person(x.who));if(mine)TS.me=mine.who}redraw()},()=>{TS.ok=false;redraw()}))}catch(e){}
+    TS.list=s.docs.map(d=>({id:d.id,...(d.data()||{})})).filter(x=>rating(x.rating)&&typeof idOf(x)==="string");if(!TS.me&&S.uid){const mine=TS.list.find(x=>x.uid===S.uid&&person(x.who));if(mine)TS.me=mine.who}redraw()},()=>{TS.ok=false;redraw()}))}catch(e){}
   try{TS.unsub.push(S.db.collection("stamps").limit(300).onSnapshot(s=>{TS.stampsOk=true;TS.stamps=s.docs.map(d=>d.data()||{}).filter(x=>x.zone&&(window.STAMPS||{})[x.zone]&&person(x.who));redraw()},()=>{TS.stampsOk=false;redraw()}))}catch(e){}
   if(S.uid){try{TS.unsub.push(S.db.doc("people/"+S.uid).onSnapshot(s=>{const w=s.exists?s.data()?.who:null;if(person(w))TS.me=w;redraw()},()=>{}))}catch(e){}}}
 async function init(){if(TS.init)return;TS.init=true;
@@ -98,8 +110,15 @@ async function init(){if(TS.init)return;TS.init=true;
 App.tastesInit=init;
 
 /* ───────── pezzi ───────── */
-// REVIEW: fuori da claude.ai (Firebase) la foto di un altro non sta in /_blob/: il doc porta anche "url" (solo se https), letto qui dopo la cache di questa visita (vedi Problemi del piano D)
-const srcOf=x=>x.ex?(x.img?x.img+"?v="+(window.SITE_V||"1"):""):(TS.urls[x.asset]||(typeof x.url==="string"&&/^https:\/\//.test(x.url)?x.url:"/_blob/"+x.asset));
+// REVIEW: fuori da claude.ai (Firebase) la foto di un altro non sta in /_blob/: i doc vecchi portano "url" (solo se https), letto qui dopo la cache di questa visita (vedi Problemi del piano D)
+const idOf=x=>typeof x.photo==="string"&&x.photo?x.photo:x.asset;
+const FB=()=>!!(window.claude&&window.claude.firebase);
+/* foto intera: cache di questa visita, url https dei doc vecchi, /_blob/ dentro claude.ai; con Firebase la foto sta in photos/<id> e si legge solo dalla pagina grande */
+const srcOf=x=>{if(x.ex)return x.img?x.img+"?v="+(window.SITE_V||"1"):"";const id=idOf(x);
+  return TS.urls[id]||TS.full[id]||(typeof x.url==="string"&&/^https:\/\//.test(x.url)?x.url:FB()?"":"/_blob/"+id)};
+const thumbOf=x=>!x.ex&&typeof x.thumb==="string"&&/^data:image\/jpeg;base64,/.test(x.thumb)?x.thumb:"";
+/* righe del libro e podio: prima la miniatura del doc */
+const smallOf=x=>thumbOf(x)||srcOf(x);
 const placeOf=x=>x.place?(App.data.places||[]).find(p=>p.id===x.place)||null:null;
 const nameOf=x=>{const p=placeOf(x);return p?L(p.name):(x.placeName||"")};
 const CITY={tokyo:"Tokyo",osaka:"Osaka",kyoto:"Kyoto",nara:"Nara",kobe:"Kobe",uji:"Uji",kamakura:"Kamakura",fuji:"Fuji"};
@@ -111,10 +130,14 @@ const fmtDay=ms=>App.fmtDate(App.tokyoParts(new Date(ms)).date,{day:"numeric",mo
 const fmtWhen=ms=>{const p=App.tokyoParts(new Date(ms));return App.fmtDT(p.date,String(p.hh).padStart(2,"0")+":"+String(p.mm).padStart(2,"0"))};
 function sealEl(who,cls="seal-p"){const p=person(who);return h("span",{class:cls,"data-p":p?p.id:null,style:{"--pc":p?p.c:"var(--stone)"},title:p?p.name:"?","aria-hidden":"true"},p?p.ini:"?")}
 function hankoEl(r,cls="hk"){const R=rating(r);if(!R)return null;return h("span",{class:cls+" r-"+R.id,lang:"ja",title:t("tastes.r."+R.id)},h("span",{class:"hk-k"},[...R.k].map(c=>h("span",{},c))))}
-function photoEl(x,cls,eager){const ph=h("span",{class:cls+(x.ex?" duo":"")});const src=srcOf(x);
+function photoEl(x,cls,eager,big){const ph=h("span",{class:cls+(x.ex?" duo":"")});const src=big?srcOf(x)||thumbOf(x):smallOf(x);
   const miss=()=>{ph.classList.add("miss");ph.replaceChildren(h("span",{class:"miss-k",lang:"ja","aria-hidden":"true"},"味"))};
   if(!src){miss();return ph}
   if(x.ex)ph.append(h("span",{class:"ink"}));ph.append(h("img",{src,alt:"",loading:eager?"eager":"lazy",decoding:"async",onerror:miss}));return ph}
+/* pagina grande con Firebase: photos/<id> si legge solo adesso; intanto si vede la miniatura */
+async function loadFull(x,ph){const id=idOf(x),S=SH();if(x.ex||!FB()||!id||TS.urls[id]||TS.full[id]||!S.db)return;
+  try{const s=await S.db.doc("photos/"+id).get();const d=s.exists?s.data():null;if(!d||typeof d.data!=="string"||!/^data:image\//.test(d.data))return;
+    TS.full[id]=d.data;const img=ph.querySelector("img");if(img)img.src=d.data;else{ph.classList.remove("miss");ph.replaceChildren(h("img",{src:d.data,alt:"",decoding:"async"}))}}catch(e){}}
 
 /* ── una pagina del libro ── */
 function pageEl(x,i){const r=rating(x.rating),p=person(x.who),fam=familyOf(x);
@@ -259,8 +282,9 @@ function openPage(x){const r=rating(x.rating),p=person(x.who),P=placeOf(x),S=SH(
       // REVIEW: come da piano si cancella solo il doc; la foto resta tra gli asset dell'artifact (vedi Problemi)
       b.disabled=true;const ok=await App.shWrite(()=>S.db.collection("tastes").doc(x.id).delete());
       if(ok){TS.list=TS.list.filter(y=>y.id!==x.id);App.closeSheet();render()}else{b.disabled=false;b.textContent=t("tastes.err.save")}}},t("tastes.delete")):null;
+  const bigPh=photoEl(x,"tb-ph",true,true);
   const node=h("div",{class:"tbig"},App.bandHanko({eat:"食",see:"見",night:"夜",shop:"買",trip:"旅"}[x.cat]||"味"),
-    h("div",{class:"tb-frame"},photoEl(x,"tb-ph",true),x.ex?h("span",{class:"tp-rib","aria-hidden":"true"},h("span",{},t("tastes.example"))):null),
+    h("div",{class:"tb-frame"},bigPh,x.ex?h("span",{class:"tp-rib","aria-hidden":"true"},h("span",{},t("tastes.example"))):null),
     h("div",{class:"sh-body tb-body"},
       h("div",{class:"tb-verdict"},hankoEl(x.rating,"hk hk-l"),h("div",{class:"tb-vt"},h("b",{},t("tastes.r."+r.id)),x.again?h("span",{class:"tb-again"},h("span",{class:"sq",lang:"ja"},"再"),t("tastes.again")):null)),
       h("div",{class:"sh-title"},h("h2",{id:"sheet-title"},nameOf(x)),h("div",{class:"tb-where"},h("span",{class:"tp-ico",style:{"--cc":x.cat?App.catColor(x.cat):"var(--ink)"},"aria-hidden":"true",html:iconFor(x)}),cityName(x.city))),
@@ -268,7 +292,7 @@ function openPage(x){const r=rating(x.rating),p=person(x.who),P=placeOf(x),S=SH(
       h("div",{class:"tb-by"},sealEl(x.who),h("span",{},h("b",{},p?p.name:"?"),h("span",{class:"tb-when"},x.at?fmtWhen(x.at):""))),
       P?h("button",{type:"button",class:"inkline",onclick:()=>App.placeSheet(P,{showOnMap:true})},h("span",{class:"k",lang:"ja"},"店"),t("tastes.open")):null,
       del));
-  App.openSheet(node)}
+  App.openSheet(node);loadFull(x,bigPh)}
 
 /* ───────── chi sei ───────── */
 function openWho(then){const S=SH();
@@ -289,7 +313,7 @@ function suggestions(){const out=[],add=p=>{if(p&&!out.includes(p)&&p.status!=="
 function searchPlaces(q){q=norm(q);if(q.length<2)return[];return(App.data.places||[]).filter(p=>[p.name?.it,p.name?.en,p.name?.ja].some(n=>n&&norm(n).includes(q))).slice(0,6)}
 function openNew(){if(!canPost())return;if(!TS.me){openWho(openNew);return}
   const S=SH(),sug=suggestions();
-  const d={blob:null,url:null,place:null,other:false,otherName:"",otherCity:App.data.trip.days.find(x=>x.date===App.tokyoParts().date)?.city||sug[0]?.city||"tokyo",rating:null,again:false,note:""};
+  const d={blob:null,thumb:null,url:null,place:null,other:false,otherName:"",otherCity:App.data.trip.days.find(x=>x.date===App.tokyoParts().date)?.city||sug[0]?.city||"tokyo",rating:null,again:false,note:""};
   const err=h("p",{class:"tn-err",role:"status","aria-live":"polite"});
   /* foto */
   const input=h("input",{type:"file",accept:"image/*",capture:"environment",class:"sr",id:"tn-file"});
@@ -299,7 +323,7 @@ function openNew(){if(!canPost())return;if(!TS.me){openWho(openNew);return}
     ph.dataset.state="";ph.replaceChildren(h("span",{class:"tn-ph-i","aria-hidden":"true",html:(window.ICONS||{}).camera||""}),h("span",{class:"tn-ph-t"},t("tastes.photo")))};
   drawPhoto();
   input.addEventListener("change",async()=>{const f=input.files&&input.files[0];if(!f)return;drawPhoto("busy");err.textContent="";
-    try{const b=await resizeImage(f);if(d.url)URL.revokeObjectURL(d.url);d.blob=b;d.url=URL.createObjectURL(b)}catch(e){err.textContent=t("tastes.photo.err")}
+    try{const r=await preparePhoto(f);if(d.url)URL.revokeObjectURL(d.url);d.blob=r.blob;d.thumb=r.thumb;d.url=URL.createObjectURL(r.blob)}catch(e){err.textContent=t("tastes.photo.err")}
     drawPhoto();check()});
   /* posto */
   const where=h("div",{class:"tn-where"});
@@ -334,7 +358,8 @@ function openNew(){if(!canPost())return;if(!TS.me){openWho(openNew);return}
       return fail(t(c==="too_large"?"tastes.err.big":c==="quota_or_state"?"tastes.err.quota":c==="not_granted"||c==="capability_disabled"||c==="capability_removed"?"tastes.err.off":"tastes.err.upload"))}
     if(!up||!up.id)return fail(t("tastes.err.upload"));
     TS.urls[up.id]=up.url;const P=d.place&&(App.data.places||[]).find(p=>p.id===d.place);
-    const doc={asset:up.id,place:P?P.id:null,placeName:P?L(P.name):d.otherName.trim().slice(0,80),city:P?P.city:d.otherCity,dish:P?P.dish||null:null,icon:P?P.icon||null:null,cat:P?P.cat:"eat",
+    // REVIEW: il piano chiede il campo "photo" (id); si tiene anche "asset" con lo stesso id, così i doc restano leggibili dalle versioni precedenti e dai test esistenti
+    const doc={asset:up.id,photo:up.id,thumb:d.thumb,place:P?P.id:null,placeName:P?L(P.name):d.otherName.trim().slice(0,80),city:P?P.city:d.otherCity,dish:P?P.dish||null:null,icon:P?P.icon||null:null,cat:P?P.cat:"eat",
       rating:d.rating,again:!!d.again,note:d.note.trim().slice(0,140),uid:S.uid,who:TS.me,at:Date.now()};if(typeof up.url==="string"&&/^https:\/\//.test(up.url))doc.url=up.url;
     let ref;try{ref=S.db.collection("tastes").doc()}catch(e){return fail(t("tastes.err.save"))}
     const ok=await App.shWrite(()=>ref.set(doc));
@@ -373,5 +398,5 @@ function render(){const box=$("#tastes");if(!box)return;const all=allTastes();
     TS.list.length?null:previewEl()].filter(Boolean));
   if(TS.fresh)setTimeout(()=>{TS.fresh=null},900);if(TS.freshStamp)setTimeout(()=>{TS.freshStamp=null},900)}
 App.renderTastes=function(){init();render()};
-App.tastesDebug=()=>({PEOPLE,RATINGS,familyOf,podium,filterTastes,avgRating,resizeImage,currentPhase,examples,exampleStamps,suggestions,searchPlaces,TS,canPost,stampZones,stampPodium,zoneIn});
+App.tastesDebug=()=>({PEOPLE,RATINGS,familyOf,podium,filterTastes,avgRating,resizeImage,preparePhoto,currentPhase,examples,exampleStamps,suggestions,searchPlaces,TS,canPost,stampZones,stampPodium,zoneIn});
 })();
