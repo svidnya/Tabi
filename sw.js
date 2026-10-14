@@ -1,5 +1,5 @@
 /* Giappone 2026 — service worker della versione installabile (piano C).
-   Registrato da app.js come sw.js?v=SITE_V, solo su https e fuori da claude.ai: la versione nel nome della cache ("giappone-v61").
+   Registrato da app.js come sw.js?v=SITE_V, solo su https e fuori da claude.ai: la versione nel nome della cache ("giappone-v62").
    Strategia: rete prima per le pagine e per data/*.json (le novità arrivano subito, offline resta l'ultima copia);
    cache prima per il resto (js, geo, img, icone, tutti con ?v=). Le cache delle versioni vecchie si cancellano all'attivazione. */
 "use strict";

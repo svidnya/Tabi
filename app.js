@@ -482,24 +482,29 @@ function rollSet(el,str){const ch=[...str],sig=ch.map(c=>/\d/.test(c)?"d":c).joi
   const kids=[...el.children],n=kids.length;
   kids.forEach((k,i)=>{if(!k.classList.contains("reel"))return;const s=k.firstChild;s.style.transitionDelay=(n-1-i)*30+"ms";s.style.transform=`translateY(${-(+ch[i])*10}%)`});
   el.nextSibling.textContent=str}
-function openYen(){const R=App.data.i18n.rate.jpyPerEur;let val="1000",dir="jpy";const loc=()=>App.lang==="it"?"it-IT":"en-GB";
+function openYen(){const RATES={eur:App.data.i18n.rate.jpyPerEur,gbp:App.data.i18n.rate.jpyPerGbp||0};let cur="eur",val="1000",dir="jpy";const loc=()=>App.lang==="it"?"it-IT":"en-GB";
+  const R=()=>RATES[cur],SYM=()=>cur==="eur"?"€":"£";
   const line=()=>{const r=h("span",{class:"roll","aria-hidden":"true"});return[r,h("span",{class:"sr"})]};
   const [inR,inS]=line(),[outR,outS]=line();
   const disp=h("div",{class:"conv-display","aria-live":"polite"},h("span",{class:"big"},inR,inS),h("span",{class:"eur"},h("span",{class:"eq"},"="),h("span",{},outR,outS)),
-    h("small",{},`${t("yen.rate")}: €1 = ¥${R}. ${t("yen.rateNote")}`));
-  function draw(){const n=parseFloat(val||"0");const out=dir==="jpy"?n/R:n*R;
-    rollSet(inR,(dir==="jpy"?"¥":"€")+Number(val||0).toLocaleString(loc()));
-    rollSet(outR,dir==="jpy"?"€"+out.toLocaleString(loc(),{minimumFractionDigits:2,maximumFractionDigits:2}):"¥"+Math.round(out).toLocaleString(loc()))}
+    h("small",{class:"rate-note"}));
+  function draw(){const n=parseFloat(val||"0");const out=dir==="jpy"?n/R():n*R();
+    disp.querySelector(".rate-note").textContent=`${t("yen.rate")}: ${SYM()}1 = ¥${R()}. ${t("yen.rateNote")}`;
+    rollSet(inR,(dir==="jpy"?"¥":SYM())+Number(val||0).toLocaleString(loc()));
+    rollSet(outR,dir==="jpy"?SYM()+out.toLocaleString(loc(),{minimumFractionDigits:2,maximumFractionDigits:2}):"¥"+Math.round(out).toLocaleString(loc()))}
   const key=k=>{if(k==="⌫")val=val.slice(0,-1);else if(k==="C")val="";else if(val.length<9)val=(val==="0"?"":val)+k;draw()};
   const pad=h("div",{class:"keypad"},["1","2","3","4","5","6","7","8","9","C","0","⌫"].map(k=>h("button",{type:"button",onclick:()=>key(k)},k)));
   draw();
   const node=h("div",{class:"sh-body pocket"},h("div",{class:"sh-title"},h("h2",{id:"sheet-title"},t("yen.title")),h("div",{class:"ja",lang:"ja"},"円 ・ 会話")),
-    h("div",{class:"conv"},disp,h("button",{class:"swap",type:"button"},t(dir==="jpy"?"yen.toEur":"yen.toJpy")),pad),
+    h("div",{class:"conv"},disp,h("div",{class:"conv-row"},h("button",{class:"swap",type:"button"},t(dir==="jpy"?"yen.toEur":"yen.toJpy")),
+      h("div",{class:"cur-pick",role:"group","aria-label":t("yen.currency")},h("button",{class:"lvl",type:"button","aria-pressed":"true","data-cur":"eur"},"€ EUR"),h("button",{class:"lvl",type:"button","aria-pressed":"false","data-cur":"gbp"},"£ GBP"))),pad),
     h("div",{},h("p",{class:"eyebrow",style:{marginBottom:"8px"}},t("yen.phrases")),h("div",{style:{display:"grid",gap:"8px"}},App.data.phrases.survival.map(App.phraseEl))),
     h("div",{},h("p",{class:"eyebrow",style:{marginBottom:"8px"}},t("yen.emergency")),h("div",{class:"emerg"},App.data.phrases.emergency.filter(x=>x.number).map(x=>h("div",{},h("b",{},x.number),h("div",{},L(x))))),
       h("div",{style:{marginTop:"8px"}},App.phraseEl(App.data.phrases.emergency.find(x=>x.ja)))));
   /* un solo gestore sul bottone: con due (h() + onclick) lo scambio si annullava */
-  const sw=node.querySelector(".swap");sw.onclick=()=>{dir=dir==="jpy"?"eur":"jpy";sw.textContent=t(dir==="jpy"?"yen.toEur":"yen.toJpy");draw()};
+  const sw=node.querySelector(".swap");const swTxt=()=>sw.textContent=t(dir==="jpy"?(cur==="eur"?"yen.toEur":"yen.toGbp"):(cur==="eur"?"yen.toJpy":"yen.gbpToJpy"));
+  sw.onclick=()=>{dir=dir==="jpy"?"eur":"jpy";swTxt();draw()};
+  node.querySelectorAll(".cur-pick .lvl").forEach(b=>b.onclick=()=>{cur=b.dataset.cur;node.querySelectorAll(".cur-pick .lvl").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));swTxt();draw()});
   App.openSheet(h("div",{},App.bandHanko("円"),node))}
 $("#yen").onclick=openYen;
 
