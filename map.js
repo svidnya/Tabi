@@ -114,6 +114,7 @@ function paint(){if(!map||!map.isStyleLoaded())return;const c=carta();
   if(map.getLayer("stations")){map.setPaintProperty("stations","circle-color",c.land);map.setPaintProperty("stations","circle-stroke-color",c.ink)}
   if(map.getLayer("water-fill")){map.setPaintProperty("water-fill","fill-color",c.water);map.setPaintProperty("water-edge","line-color",rgba(c.ink,.14));map.setPaintProperty("river-edge","line-color",rgba(c.ink,.14));map.setPaintProperty("river","line-color",riverColor(c))}
   if(map.getLayer("road-1"))for(const[id]of ROAD)map.setPaintProperty(id,"line-color",c.ink);
+  if(map.getLayer("today-route"))map.setPaintProperty("today-route","line-color",c.ink);
   if(map.getLayer("zone-halo-fill")){map.setPaintProperty("zone-halo-fill","fill-color",c.paper3);map.setPaintProperty("zone-halo-line","line-color",rgba(c.ink,.35))}}
 
 function pinFor(p){const w=h("div",{class:"pm"});const b=h("button",{class:"pin"+(p.booking==="booked"?" booked":"")+(p.status==="closed"?" closed":"")+(p.discover?" discover":"")+(p.chain?" chain":""),type:"button","aria-label":L(p.name),style:{"--c":p.booking==="booked"?"var(--c-booked)":App.catColor(p.cat)},lang:"ja"},App.iconEl(p),h("span",{class:"pk","aria-hidden":"true"},App.glyph(p)));
@@ -163,12 +164,28 @@ function todayInfo(){const D=App.data,m=D.trip.meta||{},day=App.tokyoParts(App.n
   const st=(D.trip.stays||[]).filter(s=>s.from<=day&&day<s.to).pop()||(D.trip.stays||[]).filter(s=>s.from<=day).pop();if(!st)return null;
   const home=D.bases.find(b=>b.id===st.id),city=CITY_SEALS.find(c=>c.cities.includes(st.city));
   const zone=home?(D.zones||[]).filter(z=>city&&city.cities.includes(z.city)).sort((a,b)=>App.km(home.lat,home.lng,a.lat,a.lng)-App.km(home.lat,home.lng,b.lat,b.lng))[0]:null;
-  return{day,stay:st,home,city,zone,bookings:(D.trip.bookings||[]).filter(b=>b.date===day)}}
+  /* i posti decisi insieme (Oggi, plan) hanno lo stesso cartellino dei prenotati, con "~" se l'ora è indicativa */
+  const pl=(App.todayPlan?App.todayPlan():[]).filter(x=>x.kind==="plan").map(x=>({place:x.place,time:(x.approx?"~":"")+x.time}));
+  return{day,stay:st,home,city,zone,bookings:(D.trip.bookings||[]).filter(b=>b.date===day).concat(pl)}}
+/* #mappa/oggi: città del giorno, inquadratura su casa e posti della giornata, filo d'inchiostro da casa ai posti e di nuovo a casa */
+let HOLD=false;const EMPTY_FC={type:"FeatureCollection",features:[]};
+function markToday(){const td=todayInfo();for(const m of markers){const bk=td&&td.bookings.find(x=>x.place===m.p.id);m.el.classList.toggle("today",!!bk);
+  m.el.tag.replaceChildren(...(bk?[h("span",{class:"mono"},bk.time||""),h("b",{},L(m.p.name))]:[h("b",{},L(m.p.name)),h("span",{class:"mono"},"¥".repeat(m.p.price||1))]))}}
+function routeData(ll){return ll.length>1?{type:"FeatureCollection",features:[{type:"Feature",properties:{},geometry:{type:"LineString",coordinates:ll}}]}:EMPTY_FC}
+function setRoute(ll){if(!map.getSource("today-route")){map.addSource("today-route",{type:"geojson",data:EMPTY_FC});
+    map.addLayer({id:"today-route",type:"line",source:"today-route",layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":carta().ink,"line-opacity":.55,"line-width":1.8,"line-dasharray":[1.5,2]}})}
+  map.getSource("today-route").setData(routeData(ll))}
+function showToday(){const td=todayInfo();if(!td||!td.city||!td.home)return false;const P=App.data.places;
+  const it=(App.todayPlan?App.todayPlan():[]).filter(x=>x.min==null||x.ago<=120),ps=it.map(x=>x.place&&P.find(p=>p.id===x.place)).filter(Boolean);
+  HOLD=true;setCity(td.city.id);markToday();$("#map").dataset.oggi="1";const hm=td.home,ll=[[hm.lng,hm.lat],...ps.map(p=>[p.lng,p.lat])];if(it.some(x=>x.kind==="train"))ll.push([hm.lng,hm.lat]);
+  setRoute(ll);fitTo([hm,...ps],{side:120,maxZoom:14});return true}
+const oggiOff=()=>$("#map").removeAttribute("data-oggi");
+const isOggi=()=>/^#mappa\/oggi\b/.test(location.hash||"");
 
 /* ── stato nell'indirizzo: #mappa/<città>/<zona>/<cosa>/<genere>, sempre replaceState; copia in sessionStorage ── */
 let NOANIM=false;const DUR=ms=>App.REDUCED||NOANIM?0:ms;
 function saveState(){const segs=[state.city,state.zone,state.what,state.genre];try{sessionStorage.setItem("mapState",JSON.stringify(segs))}catch(e){}
-  if($("#v-map").hidden)return;const hs=state.city?"#mappa/"+segs.map(x=>x||"-").join("/"):"#mappa";
+  if(HOLD){HOLD=false;return}if($("#v-map").hidden)return;oggiOff();const hs=state.city?"#mappa/"+segs.map(x=>x||"-").join("/"):"#mappa";
   if(location.hash!==hs){try{history.replaceState(history.state,"",hs)}catch(e){}}}
 function readState(){const m=(location.hash||"").match(/^#mappa\/(.+)$/);let segs=null;
   if(m)segs=m[1].split("/").map(x=>x&&x!=="-"?decodeURIComponent(x):null);else{try{segs=JSON.parse(sessionStorage.getItem("mapState")||"null")}catch(e){}}
@@ -176,7 +193,7 @@ function readState(){const m=(location.hash||"").match(/^#mappa\/(.+)$/);let seg
   const out={city,zone:null,what:null,genre:null};if(zone&&zonesFor(city).some(x=>x.z.id===zone))out.zone=zone;
   if(what&&WHAT.some(w=>w.id===what)){out.what=what;if(genre&&genresFor(city,what,out.zone).some(g=>g.key===genre))out.genre=genre}return out}
 /* all'apertura: ripristina e inquadra senza animazione */
-function restoreState(){const r=readState();if(!r)return false;Object.assign(state,r);NOANIM=true;
+function restoreState(){if(isOggi()&&showToday())return true;const r=readState();if(!r)return false;Object.assign(state,r);NOANIM=true;
   try{render();const z=state.zone&&(App.data.zones||[]).find(x=>x.id===state.zone);if(state.genre)openList();else if(z)flyZone(z);else flyLevel(LEVELS.find(l=>l.id===state.city)||LEVELS[0])}finally{NOANIM=false}return true}
 
 /* ── percorso: briciole, passi, elenco ── */
@@ -337,13 +354,14 @@ function padUI(){const wide=!PHONE(),ui=$(".map-ui").getBoundingClientRect().bot
   /* a peek 40 px in più in basso (un sigillo o un pin), così niente finisce sotto il bordo del cassetto */
   const peek=!wide&&(drawer().dataset.detent||"peek")==="peek";
   const top=Math.min(Math.round(ui+16),Math.round(innerHeight*.55));return{top,bottom:bottom+(peek?40:0),left:30,right:wide?40:30,ui}}
-function fitTo(ps){if(!map||!ps.length)return;const wide=!PHONE(),pd=padUI();
+/* o.side: margine laterale minimo (#mappa/oggi: 120 px, i cartellini stanno dentro), o.maxZoom */
+function fitTo(ps,o={}){if(!map||!ps.length)return;const wide=!PHONE(),pd=padUI(),mz=o.maxZoom||15;
   /* in alto: fondo delle briciole + 8 px + mezzo pin scelto (17 px × 1,15 + 4 di sollevamento, arrotondato a 28: fitBounds conta il punto, non il disegno) */
-  let top=Math.min(Math.round(pd.ui+8+52),Math.round(innerHeight*.55)),bottom=pd.bottom,right=wide?440:30,left=wide?40:30;
+  let top=Math.min(Math.round(pd.ui+8+52),Math.round(innerHeight*.55)),bottom=pd.bottom,right=wide?440:Math.max(30,o.side||0),left=Math.max(wide?40:30,o.side||0);
   const room=innerHeight-top-bottom;if(room<90)top=Math.max(20,top-(90-room)); // REVIEW: su schermi bassi lo spazio tra striscia e foglio è poco: alzo il padding in alto
-  if(ps.length===1){map.easeTo({center:[ps[0].lng,ps[0].lat],zoom:15,padding:{top,bottom,left,right},duration:DUR(900)});return}
+  if(ps.length===1){map.easeTo({center:[ps[0].lng,ps[0].lat],zoom:mz,padding:{top,bottom,left,right},duration:DUR(900)});return}
   let w=180,e=-180,s=90,n=-90;for(const p of ps){w=Math.min(w,p.lng);e=Math.max(e,p.lng);s=Math.min(s,p.lat);n=Math.max(n,p.lat)}
-  map.fitBounds([[w,s],[e,n]],{padding:{top,bottom,left,right},maxZoom:15,duration:DUR(1200),essential:true,pitch:0,bearing:0})}
+  map.fitBounds([[w,s],[e,n]],{padding:{top,bottom,left,right},maxZoom:mz,duration:DUR(1200),essential:true,pitch:0,bearing:0})}
 
 function refresh(){const ok=new Set(filtered().map(p=>p.id));markers.forEach(m=>m.el.dataset.dim=ok.has(m.p.id)?"0":"1");
   $("#map-count").textContent=ok.size+" "+t("filter.count");renderHead();
@@ -423,6 +441,10 @@ let baseMarkers=[];
 function cull(){const b=map.getBounds(),dw=(b.getEast()-b.getWest())*.2,dh=(b.getNorth()-b.getSouth())*.2,W=b.getWest()-dw,E=b.getEast()+dw,S=b.getSouth()-dh,N=b.getNorth()+dh;
   for(const m of markers){const off=m.p.lng<W||m.p.lng>E||m.p.lat<S||m.p.lat>N?"1":"0";if(m.el.dataset.off!==off)m.el.dataset.off=off}}
 function declutter(){if(!map)return;const z=$("#map").dataset.z;cull();
+  /* cartellini della giornata: vicino al bordo sinistro girati a destra del pin, vicino al destro a sinistra */
+  /* due cartellini che si toccano: il secondo va sotto il pin */
+  const tr=[];for(const m of markers)if(m.el.classList.contains("today")){const g=m.el.tag,x=map.project([m.p.lng,m.p.lat]).x;g.classList.toggle("to-r",x<140);g.classList.toggle("to-l",x>innerWidth-140);g.classList.remove("below");
+    const r=g.getBoundingClientRect();if(!r.width)continue;if(tr.some(q=>r.left<q.right&&q.left<r.right&&r.top<q.bottom&&q.top<r.bottom)){g.classList.add("below");tr.push(g.getBoundingClientRect())}else tr.push(r)}
   if(z==="city"){const g=grid();for(const zm of zoneMarkers){const el=zm.getElement();el.style.visibility="visible";const s=size(el),r=rectAt(map.project(zm.getLngLat()),s.w,s.h,.5,1,0,-16);if(g.hits(r))el.style.visibility="hidden";else g.add(r)}}
   spread(z==="city");
   /* sigilli di carta delle zone: mai sovrapposti; in ordine di posti, chi sta a meno di 44 px da un sigillo già tenuto si nasconde */
@@ -447,7 +469,7 @@ function spread(on){const vis=[];for(const m of markers){const show=on&&m.el.dat
     const cx=g.reduce((s,v)=>s+v.x,0)/g.length,cy=g.reduce((s,v)=>s+v.y,0)/g.length;
     g.forEach((v,i)=>{let dx=v.x-cx,dy=v.y-cy,d=Math.hypot(dx,dy);if(d<1){const a=2*Math.PI*i/g.length;dx=Math.cos(a);dy=Math.sin(a);d=1}
       v.m.off=[Math.round(12*dx/d),Math.round(12*dy/d)];v.m.m.setOffset(v.m.off)})}}
-App.initMap=function(){if(map){map.resize();return}try{initMapInner()}catch(err){console.error(err);const c=$("#map-count");c.textContent=(App.lang==="it"?"Mappa non disponibile: ":"Map unavailable: ")+err.message}};
+App.initMap=function(){if(map){map.resize();if(isOggi()&&map.isStyleLoaded())showToday();return}try{initMapInner()}catch(err){console.error(err);const c=$("#map-count");c.textContent=(App.lang==="it"?"Mappa non disponibile: ":"Map unavailable: ")+err.message}};
 function diag2(msg){console.log(msg)}
 function diag(msg){const c=$("#map-count");if(c&&!c.dataset.ok)c.textContent=msg}
 addEventListener("error",e=>diag("err: "+(e.message||e.error)));addEventListener("unhandledrejection",e=>diag("rej: "+(e.reason&&e.reason.message||e.reason)));
@@ -520,7 +542,7 @@ function initMapInner(){
   map.on("moveend",()=>{const t0=performance.now();declutter();stationLabels();perf.lastMoveMs=performance.now()-t0;perf.n++});
   map.on("zoom",ringSize);
   /* il GPS si ferma lasciando la Mappa e riparte al ritorno se la posizione veniva dal GPS */
-  document.addEventListener("view",ev=>{if(ev.detail==="map"){if(state.gps&&state.near)startWatch()}else stopWatch()});
+  document.addEventListener("view",ev=>{if(ev.detail==="map"){if(state.gps&&state.near)startWatch()}else{stopWatch();oggiOff();if(map.getSource("today-route"))map.getSource("today-route").setData(EMPTY_FC)}});
   map.on("click",ev=>{if(!state.nearMode)return;state.gps=false;acc=null;setNear({lat:ev.lngLat.lat,lng:ev.lngLat.lng},true)});
   const css=document.createElement("style");css.textContent=`
     .pm{padding:9px;display:grid;place-items:center}

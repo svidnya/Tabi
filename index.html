@@ -733,6 +733,14 @@ main{min-height:100vh}
 .pm.today .tag{display:flex;background:var(--ink);color:var(--paper);box-shadow:0 0 0 1.5px var(--shu)}
 .pm.today .tag .mono{opacity:1;font-family:var(--f-mono)}
 .pm.today .pl{display:none!important}
+/* #mappa/oggi: i posti della giornata restano visibili anche a zoom medio, col cartellino */
+#v-map #map[data-z="mid"] .pm.today:not([data-off="1"]):not([data-dim="1"]){display:grid}
+#v-map .pm.today{z-index:2}
+/* passo 13: in #mappa/oggi niente sigilli né nomi di zona; cartellini girati verso l'interno vicino ai bordi */
+#v-map #map[data-oggi="1"] :is(.zone-seal,.zone-lbl){display:none!important}
+.pm.today .tag.to-r{left:calc(50% - 16px);translate:0 0}.pm.today .tag.to-r::after{left:16px}
+.pm.today .tag.below{bottom:auto;top:calc(50% + 29px)}.pm.today .tag.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:var(--ink)}
+.pm.today .tag.to-l{left:auto;right:calc(50% - 16px);translate:0 0}.pm.today .tag.to-l::after{left:auto;right:16px;translate:50% 0}
 /* MapLibre non arrivato dopo i tentativi: cartello in carta con il bottone per riprovare */
 .map-err{position:absolute;z-index:12;left:var(--gutter);right:var(--gutter);top:38%;max-width:420px;margin:0 auto;display:grid;gap:14px;justify-items:start;padding:18px 20px 20px;background:var(--paper);color:var(--ink);border:2px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
 .map-err[hidden]{display:none}
@@ -944,6 +952,12 @@ details.guide summary{cursor:pointer;font-weight:800;min-height:44px;display:fle
 .wx b{display:inline-flex;align-items:center;gap:6px}
 .wx-i{display:inline-grid;width:22px;height:22px;color:var(--ink)}
 .wx-i svg{width:22px;height:22px}
+.wx .badge{font-size:.72rem;padding:1px 6px;margin-left:6px}
+.wx-hours{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.wh{display:grid;justify-items:center;gap:2px;min-width:0}
+.wh-h{font-family:var(--f-mono);font-size:.7rem;color:var(--stone)}
+.wh-i{display:inline-grid;width:18px;height:18px;color:var(--ink)}.wh-i svg{width:18px;height:18px}
+.wh b{font-family:var(--f-mono);font-size:.8rem;font-weight:500;font-variant-numeric:tabular-nums}
 /* Adesso: una riga grande, si tocca */
 .now{display:grid;gap:4px;width:100%;text-align:left;background:none;border:0;border-left:3px solid var(--shu);padding:4px 0 4px 14px;color:var(--ink);font:inherit;cursor:pointer}
 .now-t{display:flex;align-items:flex-start;gap:10px;font-family:var(--f-display);font-weight:300;font-size:clamp(1.6rem,5.4vw,2rem);line-height:1.08;letter-spacing:-.015em}
@@ -1003,6 +1017,72 @@ details.guide summary{cursor:pointer;font-weight:800;min-height:44px;display:fle
 .lt{display:grid;grid-template-columns:6.4rem minmax(0,1fr);gap:10px;font-family:var(--f-mono);font-size:.85rem;line-height:1.35}
 .lt b{font-weight:500;color:var(--shu);white-space:nowrap}
 .lt-note{margin-top:8px;font-size:.78rem;color:var(--stone)}
+/* La giornata: linea del tempo (ora, filo d'inchiostro col segno della voce, testo) */
+.tl{list-style:none;margin:0;padding:0}
+.ti{position:relative;display:grid;grid-template-columns:5rem 18px minmax(0,1fr);column-gap:10px;align-items:start;padding:7px 0;min-height:40px}
+.ti::before{content:"";position:absolute;left:calc(5rem + 18px);top:0;bottom:0;width:1.5px;background:var(--ink)}
+.ti:first-child::before{top:1.05em}.ti:last-child::before{bottom:calc(100% - 1.05em)}
+.ti .t{font-family:var(--f-mono);color:var(--shu);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:.92rem;line-height:1.5}
+.ti.approx .t,.ti.past .t{color:var(--stone)}
+.ti-train .t{white-space:normal}
+.ti.booked .t::after{content:" 予";font-family:var(--f-jp);font-weight:800}
+.ti .t.tb{position:relative;justify-self:start;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline dotted 1px;text-underline-offset:4px}
+.ti .t.tb::after{content:"";position:absolute;inset:-12px -6px}
+.ti .mk{position:relative;z-index:1;justify-self:center;margin-top:.42em;width:9px;height:9px;border-radius:1px;background:var(--ink)}
+.ti-fixed.booked .mk{background:var(--shu)}
+.ti-move .mk,.ti-home .mk{background:var(--paper);border:1.5px solid var(--ink)}
+.ti-move .mk{rotate:45deg}
+.ti-plan .mk{width:10px;height:10px;border-radius:50%;background:var(--paper);border:1.5px solid var(--shu)}
+.ti-sun .mk{width:8px;height:1.5px;margin-top:.7em;background:var(--stone)}
+.ti-gap .mk,.ti-fold .mk{visibility:hidden}
+.ti-gap::before{background:none;border-left:1.5px dashed var(--ink);width:0}
+.tx{display:grid;gap:4px;min-width:0}
+.ti-l{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;min-width:0;line-height:1.5}
+.ti-n{background:none;border:0;padding:10px 0;margin:-10px 0;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.ti .ev-place{margin:-10px 0}
+.ti-sun .ti-n,.ti-sun .t{color:var(--stone);font-size:.85rem}
+.ti.past .ti-l{color:var(--stone)}
+.ti-in{font-family:var(--f-mono);font-size:.85rem;color:var(--shu)}
+.ti-s{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:.85rem;color:var(--stone);line-height:1.4}
+.badge.shu-l{border-color:var(--shu);color:var(--shu)}
+.ti .done{position:absolute;right:2px;top:4px;width:2rem;height:2rem;display:grid;place-items:center;rotate:-8deg;border:2px solid currentColor;border-radius:3px;
+  font-family:var(--f-jp);font-weight:800;font-size:1.1rem;line-height:1;color:var(--ink);opacity:.4;filter:url(#rough);pointer-events:none}
+.ti.past .tx{padding-right:2.6rem}
+.ti-gap .tx{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
+.ti-gap .gl{font-style:italic;color:var(--stone)}
+.ti .inkline{font-size:.95rem;padding:2px 0;min-height:36px;min-width:44px;justify-content:center;position:relative;justify-self:start}
+.ti .inkline::after{content:"";position:absolute;inset:-4px 0}
+.ti-fold .inkline{grid-column:3}
+.now-mark{min-height:0;padding:2px 0}
+.now-mark .t{color:var(--shu);font-weight:700}
+.now-mark .mk{visibility:hidden}
+.now-mark .bar{position:absolute;left:calc(5rem + 18px);top:calc(2px + .75em);width:calc(9px + 10px + 48px);height:2px;background:var(--shu)}
+.ti-more summary{cursor:pointer;font-size:.85rem;color:var(--ink-2);padding:12px 0;margin:-8px 0;min-height:44px;box-sizing:border-box}
+.ti-more .lt{margin-top:4px}
+.pl-edit,.plan-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.pl-edit input,.plan-row input{min-height:44px;padding:6px 8px;border:1.5px solid var(--ink);border-radius:0;background:var(--paper);color:var(--ink);font-family:var(--f-mono);font-size:16px}
+.pr-l{font-weight:700}
+/* Il libro di oggi */
+.dy-row{display:flex;flex-wrap:wrap;gap:10px 12px;padding:4px 2px}
+.dy-t{position:relative;padding:3px;border:1px solid var(--line);background:var(--paper);rotate:var(--r);cursor:pointer;line-height:0}
+.dy-ph{display:block;width:64px;height:64px;overflow:hidden;background:var(--paper-3)}.dy-ph img{width:100%;height:100%;object-fit:cover}
+.dy-ph.miss{display:grid;place-items:center;font-family:var(--f-jp);color:var(--stone);line-height:1}
+.dy-t .seal-p{position:absolute;right:-5px;bottom:-5px;width:16px;height:16px;font-size:.6rem;line-height:16px;text-align:center}
+.dy-st{display:block;margin-top:8px;padding:12px 0;min-width:44px;min-height:44px;background:none;border:0;color:var(--ink-2);font-family:var(--f-mono);font-size:.85rem;text-align:left;cursor:pointer}
+.dy-empty{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;color:var(--stone);font-style:italic}
+.dy-empty .inkline{font-style:normal;font-size:.95rem;padding:4px 0}
+.day .sec-h{flex-wrap:wrap}
+.day-map{margin-left:auto;font-size:.95rem;padding:4px 0;min-height:40px;gap:8px;position:relative}.day-map::after{content:"";position:absolute;inset:-2px 0}
+.day-map .gi{display:inline-grid;width:16px;height:16px}.day-map .gi svg{width:16px;height:16px}
+/* Da non mancare */
+.heads{display:grid;gap:6px;padding:12px 14px;border:1.5px solid var(--ink);border-radius:2px;background:var(--paper)}
+.hd{display:grid;grid-template-columns:6px minmax(0,1fr) auto;column-gap:10px;align-items:baseline}
+.hd-k{width:6px;height:6px;background:var(--shu);translate:0 -2px}
+.hd-m{display:grid;gap:2px;min-width:0}
+.hd-t{font-size:.92rem;line-height:1.4;background:none;border:0;padding:0;color:inherit;font-family:inherit;text-align:left;cursor:default}
+button.hd-t{cursor:pointer;position:relative}button.hd-t::after{content:"";position:absolute;inset:-12px 0}
+.hd .inkline{font-size:.95rem;padding:2px 0;min-height:36px;min-width:44px;justify-content:center;position:relative}.hd .inkline::after{content:"";position:absolute;inset:-4px 0}
+.plan-row .inkline{font-size:1rem;padding:8px 0;min-height:44px;min-width:44px;justify-content:center}
 
 /* ───────── TASTES: il libro dei timbri (piano 2026-10-14-assaggi) ───────── */
 /* colori delle persone (trip.meta.people in ordine) e carta avorio delle pagine; la notte schiarisce le persone, la carta resta carta */
@@ -1474,13 +1554,13 @@ svg.eki-z[data-ink="shu"]{--st-ink:var(--shu)}svg.eki-z[data-ink="prussian"]{--s
 <div class="scrim" id="scrim"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheet-title"><div class="grab"></div><button class="sheet-x" id="sheet-x" type="button" aria-label="Chiudi">✕</button><div id="sheet-body"></div></aside>
 
-<script>window.SITE_V="68"</script>
-<script src="firebase-config.js?v=68"></script>
-<script src="share-firebase.js?v=68"></script>
-<script src="icons.js?v=68"></script>
-<script src="stamps.js?v=68"></script>
-<script src="app.js?v=68"></script>
-<script src="tastes.js?v=68"></script>
-<script src="story.js?v=68"></script>
+<script>window.SITE_V="69"</script>
+<script src="firebase-config.js?v=69"></script>
+<script src="share-firebase.js?v=69"></script>
+<script src="icons.js?v=69"></script>
+<script src="stamps.js?v=69"></script>
+<script src="app.js?v=69"></script>
+<script src="tastes.js?v=69"></script>
+<script src="story.js?v=69"></script>
 
 </body></html>

@@ -1,18 +1,28 @@
 {
   "approx": true,
-  "review": "Orari indicativi, da confermare per novembre 2026 (piano 2026-10-14-oggi). Osaka: la linea Tanimachi non passa da Namba-Nippombashi, valore scritto come da piano.",
+  "review": "Orari indicativi, da confermare per novembre 2026 (piano 2026-10-14-oggi). Osaka: la linea Tanimachi non passa da Namba-Nippombashi, valore scritto come da piano. Gite (trips) da confermare: orari volutamente prudenti (passo 13).",
+  "trips": {
+    "kyoto-osaka": [
+      {"line": "Keihan", "from": "Gion-Shijō", "to": "Yodoyabashi", "time": "23:30", "ll": [35.00369, 135.77196]},
+      {"line": "JR Kyoto", "from": "Kyoto", "to": "Osaka", "time": "23:45", "ll": [34.98546, 135.75775]}
+    ],
+    "nara-osaka": [
+      {"line": "Kintetsu Nara", "from": "Kintetsu-Nara", "to": "Osaka-Namba", "time": "22:50", "ll": [34.68432, 135.82747]},
+      {"line": "JR Yamatoji", "from": "Nara", "to": "Tennōji", "time": "23:00", "ll": [34.68048, 135.81894]}
+    ]
+  },
   "bases": {
     "home-tokyo1": [
-      {"line": "JR Yamanote", "to": "Shin-Ōkubo", "from": "Shinjuku", "time": "00:40"},
-      {"line": "JR Yamanote", "to": "Shin-Ōkubo", "from": "Shibuya", "time": "00:30"},
+      {"line": "JR Yamanote", "to": "Shin-Ōkubo", "from": "Shinjuku", "time": "00:40", "ll": [35.68973, 139.70046]},
+      {"line": "JR Yamanote", "to": "Shin-Ōkubo", "from": "Shibuya", "time": "00:30", "ll": [35.65887, 139.70124]},
       {"line": "Toei Ōedo", "to": "Higashi-Shinjuku", "from": null, "time": "00:20"}
     ],
     "home-osaka": [
       {"line": "Metro Tanimachi", "to": "Tanimachi 4/6-chōme", "from": "Namba-Nippombashi", "time": "00:10"},
-      {"line": "Metro Tanimachi", "to": "Tanimachi 4/6-chōme", "from": "Umeda (Higashi-Umeda)", "time": "00:05"}
+      {"line": "Metro Tanimachi", "to": "Tanimachi 4/6-chōme", "from": "Umeda (Higashi-Umeda)", "time": "00:05", "ll": [34.70103, 135.49969]}
     ],
     "home-tokyo2": [
-      {"line": "JR Chūō", "to": "Nakano", "from": "Shinjuku", "time": "00:45"},
+      {"line": "JR Chūō", "to": "Nakano", "from": "Shinjuku", "time": "00:45", "ll": [35.68973, 139.70046]},
       {"line": "Metro Marunouchi", "to": "Shin-Kōenji", "from": null, "time": "00:15"}
     ]
   }

@@ -399,6 +399,13 @@ function render(){const box=$("#tastes");if(!box)return;const all=allTastes();
     TS.list.length?null:previewEl()].filter(Boolean));
   if(TS.fresh)setTimeout(()=>{TS.fresh=null},900);if(TS.freshStamp)setTimeout(()=>{TS.freshStamp=null},900)}
 App.renderTastes=function(){init();render()};
+/* Oggi, "Il libro di oggi": assaggi e timbri veri (mai gli esempi) del giorno di Tokyo dalle 4 alle 4 */
+const dayOf=ms=>App.tokyoParts(new Date((ms||0)-4*36e5)).date;
+App.tastesOn=function(date){const out=TS.list.filter(x=>!x.ex&&dayOf(x.at)===date).sort((a,b)=>(a.at||0)-(b.at||0)).map(x=>({x,thumb:()=>photoEl(x,"dy-ph"),seal:()=>sealEl(x.who),open:()=>openPage(x)}));
+  out.add=canPost()?openNew:null;out.ok=TS.ok;return out};
+App.stampsOn=function(date){return TS.stamps.filter(x=>!x.ex&&dayOf(x.at)===date).sort((a,b)=>(a.at||0)-(b.at||0)).map(x=>{const z=(App.data.zones||[]).find(q=>q.id===x.zone);return{zone:x.zone,who:x.who,name:z?zoneShortName(z):x.zone}})};
+/* Oggi, "Da non mancare": apre la pagina Timbri sulla zona */
+App.openStamp=function(zone){TS.page="stamps";App.closeSheet();App.go("tastes");render();setTimeout(()=>{const el=$("#zs-"+zone);if(el)el.scrollIntoView({behavior:App.REDUCED?"auto":"smooth",block:"center"})},80)};
 /* "Chi sei?" e il nome scelto, anche per il "Ci sto" di Oggi */
 App.openWho=openWho;App.whoMe=()=>TS.me||null;App.personName=id=>(person(id)||{}).name||"";
 App.tastesDebug=()=>({PEOPLE,RATINGS,familyOf,podium,filterTastes,avgRating,resizeImage,preparePhoto,currentPhase,examples,exampleStamps,suggestions,searchPlaces,TS,canPost,stampZones,stampPodium,zoneIn});
