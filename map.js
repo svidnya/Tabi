@@ -76,9 +76,31 @@ function edgesOnce(fc){const n=new Map(),key=(a,b)=>a[0]<b[0]||a[0]===b[0]&&a[1]
   for(const f of fc.features){const g=f.geometry,ps=g.type==="Polygon"?[g.coordinates]:g.coordinates;for(const p of ps)for(const r of p){rings.push(r);for(let i=1;i<r.length;i++){const k=key(r[i-1],r[i]);n.set(k,(n.get(k)||0)+1)}}}
   const lines=[];for(const r of rings){let cur=null;for(let i=1;i<r.length;i++){if(n.get(key(r[i-1],r[i]))===1){if(!cur){cur=[r[i-1]];lines.push(cur)}cur.push(r[i])}else cur=null}}
   return{type:"FeatureCollection",features:[{type:"Feature",properties:{},geometry:{type:"MultiLineString",coordinates:lines}}]}}
-function carta(){const p={...App.palette()},night=App.night>.6;return{night,ink:p.ink,shu:p.shu,land:p.paper,sea:p.paper2,paper3:p.paper3||p.paper2}}
+/* acque interne (piano B, ritocco): di giorno un passo più scure e più fredde del mare di carta (--sea della palette con un filo d'inchiostro),
+   così una fascia di 10 px si legge anche senza bordo; di notte restano il colore del mare */
+const waterOf=(p,night)=>night?p.paper2:mixHex(p.sea||p.paper2,p.ink,.05);
+function mixHex(a,b,t){const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16),f=s=>Math.round((A>>s&255)*(1-t)+(B>>s&255)*t);return"#"+((1<<24)+(f(16)<<16)+(f(8)<<8)+f(0)).toString(16).slice(1)}
+function carta(){const p={...App.palette()},night=App.night>.6;return{night,ink:p.ink,shu:p.shu,land:p.paper,sea:p.paper2,water:waterOf(p,night),paper3:p.paper3||p.paper2}}
 /* ferrovie (piano 18/10): da lontano inchiostro, da zoom 12 il colore della linea; un colore non valido torna inchiostro (to-color) */
 const railColor=ink=>["interpolate",["linear"],["zoom"],10.5,ink,12,["to-color",["get","color"],ink]];
+/* strade e acque (piano 18/10 B): dati GSI cotti in geo/roads.json e geo/water.json, caricati dopo "load" come le stazioni */
+const mix=mixHex;
+const fadeIn=(z,a)=>["interpolate",["linear"],["zoom"],z-.5,0,z,a];
+/* fiumi-linea: sottili; dentro le zone del viaggio (z:1) da zoom 13 diventano canali larghi ~4 px (12 a zoom 16), colore acqua, così il Dōtonbori non si confonde con una via */
+const ZW=(a,b)=>["case",["==",["get","z"],1],b,a];
+const RIVER_W=["interpolate",["linear"],["zoom"],11.5,1.2,12.5,1.7,13,ZW(1.9,4),14,ZW(2.4,6),16,ZW(5,12)];
+const riverColor=c=>["case",["==",["get","z"],1],c.water,mix(c.water,c.ink,.06)];
+// REVIEW: road-3 (comunali larghe, k:3) oggi è vuoto: per stare nei 650 KB build_city.py toglie k:3 come da piano (con k:3 sarebbero 823 KB)
+// REVIEW: water-edge è una linea sotto il riempimento (come le coste) invece di un filo da 0,8 px sopra: copre le cuciture tra i tasselli GSI
+const ROAD=[["road-3",3,13.5,.16,.6,1],["road-2",2,12.5,.26,.9,1.6],["road-1",1,11.5,.36,1.2,2.2]];
+function cityLayers(c){const ink=c.ink;return[
+  /* bordo come le coste: linea larga 1,6 sotto il riempimento, fuori ne resta 0,8 px e le cuciture tra i tasselli GSI spariscono */
+  {id:"water-edge",type:"line",source:"water",minzoom:9.5,filter:["==",["get","t"],"a"],layout:{"line-join":"round"},paint:{"line-color":rgba(ink,.14),"line-width":1.6,"line-opacity":fadeIn(10,1)}},
+  {id:"water-fill",type:"fill",source:"water",minzoom:9.5,filter:["==",["get","t"],"a"],paint:{"fill-color":c.water,"fill-opacity":fadeIn(10,1),"fill-antialias":false}},
+  {id:"river-edge",type:"line",source:"water",minzoom:11,filter:["==",["get","t"],"r"],layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":rgba(ink,.14),"line-width":.8,"line-gap-width":RIVER_W,"line-opacity":fadeIn(11.5,1)}},
+  {id:"river",type:"line",source:"water",minzoom:11,filter:["==",["get","t"],"r"],layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":riverColor(c),"line-width":RIVER_W,"line-opacity":fadeIn(11.5,1)}},
+  ...ROAD.map(([id,k,z,a,w0,w1])=>({id,type:"line",source:"roads",minzoom:z-.5,filter:["==",["get","k"],k],layout:{"line-join":"round","line-cap":"round"},paint:{"line-color":ink,"line-opacity":fadeIn(z,a),"line-width":["interpolate",["linear"],["zoom"],z,w0,16,w1]}}))]}
+// REVIEW: le larghezze delle strade vanno da w0 alla soglia a w1 a zoom 16 (il piano dà i due valori, non gli zoom)
 const railOpacity=far=>["interpolate",["linear"],["zoom"],10.5,far,12,.8];
 function paint(){if(!map||!map.isStyleLoaded())return;const c=carta();
   const w=seaPattern(c,c.night);if(map.hasImage("wave"))map.removeImage("wave");map.addImage("wave",w.data,{pixelRatio:w.pr});
@@ -90,6 +112,8 @@ function paint(){if(!map||!map.isStyleLoaded())return;const c=carta();
   map.setPaintProperty("wards-line","line-color",rgba(c.ink,.18));
   map.setPaintProperty("rail-metro","line-color",railColor(c.ink));map.setPaintProperty("rail-jr","line-color",railColor(c.ink));map.setPaintProperty("shk","line-color",c.shu);
   if(map.getLayer("stations")){map.setPaintProperty("stations","circle-color",c.land);map.setPaintProperty("stations","circle-stroke-color",c.ink)}
+  if(map.getLayer("water-fill")){map.setPaintProperty("water-fill","fill-color",c.water);map.setPaintProperty("water-edge","line-color",rgba(c.ink,.14));map.setPaintProperty("river-edge","line-color",rgba(c.ink,.14));map.setPaintProperty("river","line-color",riverColor(c))}
+  if(map.getLayer("road-1"))for(const[id]of ROAD)map.setPaintProperty(id,"line-color",c.ink);
   if(map.getLayer("zone-halo-fill")){map.setPaintProperty("zone-halo-fill","fill-color",c.paper3);map.setPaintProperty("zone-halo-line","line-color",rgba(c.ink,.35))}}
 
 function pinFor(p){const w=h("div",{class:"pm"});const b=h("button",{class:"pin"+(p.booking==="booked"?" booked":"")+(p.status==="closed"?" closed":"")+(p.discover?" discover":"")+(p.chain?" chain":""),type:"button","aria-label":L(p.name),style:{"--c":p.booking==="booked"?"var(--c-booked)":App.catColor(p.cat)},lang:"ja"},App.iconEl(p),h("span",{class:"pk","aria-hidden":"true"},App.glyph(p)));
@@ -463,6 +487,10 @@ function initMapInner(){
     setTimeout(()=>{map.getSource("wards").setData(D.wards);idle(()=>{map.getSource("wards-edge").setData(edgesOnce(D.wards));diag2("wards "+Math.round(performance.now()-t0)+"ms")})},50);
     fetch("geo/stations.json?v="+(window.SITE_V||"1")).then(r=>r.json()).then(st=>{ST=st.features;map.addSource("stations",{type:"geojson",data:st});
       map.addLayer({id:"stations",type:"circle",source:"stations",minzoom:12,paint:{"circle-radius":["interpolate",["linear"],["zoom"],12,2.5,16,5],"circle-color":c0.land,"circle-stroke-color":c0.ink,"circle-stroke-width":1.2}});paint();stationLabels()});
+    /* strade e acque: sotto le ferrovie (e quindi sotto stazioni e pin), sopra la terra e l'alone */
+    Promise.all(["roads","water"].map(n=>fetch("geo/"+n+".json?v="+(window.SITE_V||"1")).then(r=>r.json()))).then(([rd,wa])=>{
+      map.addSource("roads",{type:"geojson",data:rd,tolerance:.5});map.addSource("water",{type:"geojson",data:wa,tolerance:.5});
+      for(const l of cityLayers(carta()))map.addLayer(l,"rail-metro");paint()}).catch(e=>console.warn("city geo",e));
     paint();
     // places
     for(const pl of D.places){const el=pinFor(pl);const m=new maplibregl.Marker({element:el,anchor:"center"}).setLngLat([pl.lng,pl.lat]).addTo(map);markers.push({m,el,p:pl})}

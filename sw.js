@@ -1,5 +1,5 @@
 /* Giappone 2026 — service worker della versione installabile (piano C).
-   Registrato da app.js come sw.js?v=SITE_V, solo su https e fuori da claude.ai: la versione nel nome della cache ("giappone-v67").
+   Registrato da app.js come sw.js?v=SITE_V, solo su https e fuori da claude.ai: la versione nel nome della cache ("giappone-v68").
    Strategia: rete prima per le pagine e per data/*.json (le novità arrivano subito, offline resta l'ultima copia);
    cache prima per il resto (js, geo, img, icone, tutti con ?v=). Le cache delle versioni vecchie si cancellano all'attivazione. */
 "use strict";
@@ -9,7 +9,7 @@ const q=u=>u+"?v="+V;
 const CORE=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png",q("geo/stations.json"),
   ...["firebase-config.js","share-firebase.js","icons.js","stamps.js","app.js","tastes.js","story.js","map.js","vendor/maplibre-gl.min.js"].map(q),
   ...["trip","places","zones","bases","phrases","i18n","images","apps","omikuji","lasttrain"].map(n=>q("data/"+n+".json")),
-  ...["japan","wards","rail"].map(n=>q("geo/"+n+".json"))];
+  ...["japan","wards","rail","roads","water"].map(n=>q("geo/"+n+".json"))];
 self.addEventListener("install",ev=>{ev.waitUntil((async()=>{const c=await caches.open(CACHE);
   await Promise.all(CORE.map(u=>c.add(u).catch(()=>{})));
   /* le foto delle zone e delle fasi: l'elenco è in data/images.json */
