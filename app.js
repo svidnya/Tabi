@@ -91,6 +91,21 @@ App.fullPhrase=function(ph){const box=h("div",{class:"fullphrase",role:"dialog",
 const sheet=$("#sheet"),scrim=$("#scrim");let sheetClose=null;
 App.openSheet=function(node,onClose){const b=$("#sheet-body");b.replaceChildren(node);sheet.dataset.open="1";document.documentElement.dataset.sheet="1";scrim.dataset.open="1";sheet.scrollTop=0;sheetClose=onClose||null;App.pushLayer("sheet",()=>App.closeSheet());setTimeout(()=>$("#sheet-x").focus({preventScroll:true}),50)};
 App.closeSheet=function(){App.dropLayer("sheet");sheet.dataset.open="0";document.documentElement.dataset.sheet="0";scrim.dataset.open="0";if(sheetClose){const f=sheetClose;sheetClose=null;f()}};
+/* telefono: la scheda si chiude trascinandola in giù dalla maniglia o dalle prime 72 px (oltre 120 px o veloce), se no rientra */
+(function dragSheet(){const PH=matchMedia("(max-width:899px)");let st=null,moved=false;
+  const tm=ev=>{if(st&&moved)ev.preventDefault()};
+  sheet.addEventListener("pointerdown",ev=>{if(!PH.matches||sheet.dataset.open!=="1"||ev.button>0)return;const r=sheet.getBoundingClientRect();
+    if(ev.clientY-r.top>72||sheet.scrollTop>0)return;st={y:ev.clientY,id:ev.pointerId,last:[[ev.clientY,performance.now()]]};moved=false;
+    addEventListener("touchmove",tm,{passive:false})});
+  sheet.addEventListener("pointermove",ev=>{if(!st||ev.pointerId!==st.id)return;const d=ev.clientY-st.y;if(!moved&&d<6)return;
+    if(!moved){moved=true;sheet.classList.add("dragging");try{sheet.setPointerCapture(st.id)}catch(e){}}
+    sheet.style.transform="translateY("+Math.max(0,d)+"px)";st.last.push([ev.clientY,performance.now()]);if(st.last.length>6)st.last.shift()});
+  const up=ev=>{if(!st||ev.pointerId!==st.id)return;const s0=st;st=null;removeEventListener("touchmove",tm);sheet.classList.remove("dragging");if(!moved)return;
+    const d=ev.clientY-s0.y,a=s0.last[0],b=s0.last[s0.last.length-1],v=(b[0]-a[0])/Math.max(1,b[1]-a[1]);
+    if(d>120||v>.5){sheet.style.transform="";App.closeSheet()}
+    else{sheet.style.transition=REDUCED?"none":"transform .22s cubic-bezier(.2,.8,.2,1)";sheet.style.transform="";setTimeout(()=>{sheet.style.transition=""},240)}};
+  sheet.addEventListener("pointerup",up);sheet.addEventListener("pointercancel",up);
+  sheet.addEventListener("click",ev=>{if(moved){moved=false;ev.stopPropagation();ev.preventDefault()}},true)})();
 $("#sheet-x").onclick=App.closeSheet;scrim.onclick=App.closeSheet;addEventListener("keydown",ev=>{if(ev.key==="Escape"){const fp=$(".fullphrase");if(fp)fp.remove();else App.closeSheet()}});
 
 /* fascia bokashi con il timbro di categoria in alto a destra (Tasca, pagina grande degli assaggi, zona senza foto) */
@@ -163,7 +178,7 @@ function bandEl(p,...kids){const ims=App.data.images?.images||[],own=ims.find(i=
 /* ───────── router ───────── */
 const VIEWS={"":"story",racconto:"story",oggi:"today",mappa:"map",assaggi:"tastes"};
 let current=null;
-function viewFromHash(){let key=(location.hash||"").replace("#","");if(key.startsWith("oggi="))key="oggi";return VIEWS[key]||"story"}
+function viewFromHash(){let key=(location.hash||"").replace("#","");if(key.startsWith("oggi="))key="oggi";if(key.startsWith("mappa/"))key="mappa";return VIEWS[key]||"story"}
 function route(){show(viewFromHash())}
 const KEYOF={story:"racconto",today:"oggi",map:"mappa",tastes:"assaggi"};
 /* pila di navigazione: ogni vista e ogni foglio aperto (scheda, Tasca, pagina grande, elenco della mappa sul telefono)
@@ -196,9 +211,10 @@ addEventListener("scroll",onScrolled,{passive:true});document.addEventListener("
 $("#brand").onclick=()=>{go("story");scrollTo({top:0,behavior:REDUCED?"auto":"smooth"})};
 $$(".nav a[data-view]").forEach(a=>a.addEventListener("click",ev=>{ev.preventDefault();go(a.dataset.view)}));
 /* le due tende del colophon (#to-map, #to-today) le gestisce story.js (bindNoren): su telefono si aprono e dopo 230 ms si va alla vista */
-/* MapLibre dal CDN e map.js: un solo caricamento condiviso (precarico e apertura), tre nuovi tentativi (1 s, 3 s, 8 s);
+/* MapLibre e map.js: un solo caricamento condiviso (precarico e apertura), tre nuovi tentativi (1 s, 3 s, 8 s);
    se falliscono tutti, nella vista mappa un cartello per riprovare a mano */
-const ML_URL="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js",MAP_WAITS=[1000,3000,8000];
+/* MapLibre 4.7.1 servito dal sito stesso (vendor/, con la sua licenza): niente CDN, va in cache con il service worker */
+const ML_URL="vendor/maplibre-gl.min.js?v="+(window.SITE_V||"1"),MAP_WAITS=[1000,3000,8000];
 let mapLoading=null;
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>{s.remove();rej(new Error("script "+src))};document.head.append(s)})}
 async function loadMapLib(){for(let i=0;;i++){try{if(!window.maplibregl)await loadScript(ML_URL);if(!App.initMap)await loadScript("map.js?v="+(window.SITE_V||"1"));return}

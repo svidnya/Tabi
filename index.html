@@ -645,13 +645,13 @@ main{min-height:100vh}
 .msheet .r1 b{font-family:var(--f-display);font-weight:600;font-size:1.05rem;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .msheet .r1 .zn{font-size:.8rem;color:var(--stone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 auto}
 .msheet .r1 .yen{margin-left:auto;font-family:var(--f-mono);font-size:.9rem;flex:none}
-.msheet .badges{gap:4px;padding-left:32px}
+.msheet .row .badges{gap:4px;padding-left:32px}
 .msheet .badge{font-size:.68rem;padding:1px 6px;border-width:1px}
 .badge.open{border-color:var(--c-see);color:var(--c-see)}
 .badge.near{border-color:#2D7CFF;color:#2D7CFF}
 .badge.disc{border-color:var(--shu);color:var(--shu)}
 .badge.chain{border-style:dashed;color:var(--ink-2)}
-.msheet .what{padding-left:32px;font-size:.85rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msheet .row .what{padding-left:32px;font-size:.85rem;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #v-map[data-list="1"] .map-tools,#v-map[data-list="1"] .map-count{display:none}
 /* telefono: briciole sempre su una riga (le precedenti stanno nel "‹"), le lunghe con l'ellissi */
 @media (max-width:899px){
@@ -663,12 +663,76 @@ main{min-height:100vh}
 .crumbs .cr-back{border:0;background:none;color:var(--ink);font-family:var(--f-ui);font-style:normal;font-size:1.5rem;line-height:1;width:34px;height:40px;margin-left:-8px;cursor:pointer}
 /* telefono, elenco aperto: la testata si compatta, restano le briciole su una riga (la fascia di carta è quella della testata); zone, linguette e generi tornano chiudendo l'elenco o toccando le briciole */
 @media (max-width:899px){
-  #v-map[data-list="1"] #steps{display:none}
   #v-map[data-list="1"] .crumbs{flex-wrap:nowrap;overflow:hidden;white-space:nowrap;margin:0 calc(-1 * var(--gutter));padding:0 var(--gutter)}
   #v-map[data-list="1"] .crumbs .cr{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #v-map[data-list="1"] .crumbs .sep,#v-map[data-list="1"] .crumbs .cr-x,#v-map[data-list="1"] .crumbs .cr-zx{flex:none}
   #v-map[data-list="1"] .crumbs .cr-zone{flex:0 1 auto;min-width:0}
 }
+/* cassetto (piano 18/10): pannello destro su desktop come prima; sul telefono sempre presente, tre tappe, scende con translateY */
+#drawer{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
+#drawer .grab,#drawer .dr-steps{display:none}
+#mlist-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+@media (max-width:899px){
+  .map-ui{pointer-events:none}
+  .map-ui::before{bottom:auto;height:calc(100% + var(--top-h,70px) + 4px + 28px);background:linear-gradient(var(--paper) 0 70%,transparent);border-bottom:0;pointer-events:none}
+  .map-ui > *{pointer-events:none}
+  .map-ui #crumbs,.map-ui #near-hint{pointer-events:auto}
+  #drawer{--dr-b:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom,0px));bottom:var(--dr-b);max-height:none;height:calc(100svh - var(--top-h,70px) - 12px - var(--dr-b));
+    transform:translateY(var(--dy,100%));visibility:visible;transition:transform .26s cubic-bezier(.2,.7,.2,1);box-shadow:0 -6px 0 -4px color-mix(in srgb,var(--ink) 12%,transparent)}
+  #drawer[data-open="1"]{transform:translateY(var(--dy,100%))}
+  #drawer.dragging{transition:none}
+  #drawer .grab{display:grid;place-items:center;flex:none;width:100%;height:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:0;background:none;cursor:grab;touch-action:none}
+  #drawer .grab::before{content:"";width:36px;height:2px;background:var(--ink);opacity:.6}
+  #drawer .dr-steps{display:block;flex:none;overflow-y:auto;overscroll-behavior:contain;padding:0 var(--gutter) 8px}
+  #drawer .ml-head{flex:none;position:static;touch-action:none}
+  #drawer #mlist-body{overflow-y:auto}
+  #v-map:not([data-list="1"]) #mlist-body{overflow:hidden}
+  #t-list{display:none}
+  .map-tools{translate:0 calc(-1 * var(--dr-vis,0px) - 12px);bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom,0px));transition:translate .26s cubic-bezier(.2,.7,.2,1)}
+  #v-map[data-list="1"] .map-tools{display:grid}
+  #v-map[data-detent="full"] .map-tools{opacity:0;pointer-events:none}
+  #v-map .map-tools:has(~ #drawer.dragging){transition:none}
+}
+@media (max-width:899px) and (prefers-reduced-motion:reduce){#drawer,.map-tools{transition:none}}
+/* passo 7: strumenti, contatore, legenda, aree di tocco */
+@media (max-width:899px){
+  #map-count{display:none}
+  #t-near.t-ico{width:48px;height:48px;min-width:48px;padding:0;display:grid;place-items:center}
+  #t-near.t-ico svg{width:22px;height:22px}
+  #t-near.t-ico[data-state="locked"]{background:var(--ink);color:var(--paper)}
+  #t-near.t-ico[data-state="tap"]{background:var(--ink);color:var(--paper)}
+  #sheet{max-height:min(78svh,640px)}
+  #sheet.dragging{transition:none}
+  #sheet .grab{touch-action:none}
+}
+@media (max-width:899px) and (prefers-reduced-motion:no-preference){#t-near.t-ico[data-state="locating"] svg{animation:t-spin 1.6s linear infinite}}
+@keyframes t-spin{to{rotate:360deg}}
+.map-count{border-radius:0}
+.inkline.what::before{content:"";flex:none;width:10px;height:10px;border-radius:2px;background:var(--wc,var(--ink))}
+.genre[aria-pressed="true"] .gi{color:var(--wc,var(--shu))}
+.crumbs .cr-x,.crumbs .cr-back{width:44px;height:44px}
+/* passo 13: correzioni di Fable */
+.dr-count{display:none}
+@media (max-width:899px){
+  #v-map[data-detent="peek"] #ml-head{display:none}
+  #v-map[data-detent="peek"] #drawer .dr-count{display:block;flex:none;height:24px;line-height:24px;padding:0 var(--gutter);text-align:right;font-family:var(--f-mono);font-size:.74rem;color:var(--stone);touch-action:none}
+}
+@media (max-width:899px){
+  .map-ui::before{transition:opacity .2s}
+  html[data-sheet="1"] #v-map .map-ui{z-index:1}
+  html[data-sheet="1"] #v-map .map-ui::before{opacity:0}
+}
+#map[data-z11="1"] .zone-lbl[data-home="1"]{display:none}
+.pm .pl.flip{left:auto;right:calc(50% + 21px)}
+/* passo 9: Oggi sulla carta */
+.today-row{display:flex;width:100%;max-width:620px;margin:0 0 10px;min-height:48px;gap:10px;font-size:1.05rem;border-top:0;text-align:left}
+.pin.home.now{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--shu)}
+.pin.home.later{opacity:.7}
+.pin.home .home-l{position:absolute;left:calc(100% + 8px);top:50%;translate:0 -50%;display:none;white-space:nowrap;pointer-events:none;font-family:var(--f-ui);font-weight:700;font-size:.78rem;line-height:1.2;color:var(--ink);background:color-mix(in srgb,var(--paper) 84%,transparent);padding:1px 5px 2px}
+#map[data-z11="1"] .pin.home .home-l{display:block}
+.pm.today .tag{display:flex;background:var(--ink);color:var(--paper);box-shadow:0 0 0 1.5px var(--shu)}
+.pm.today .tag .mono{opacity:1;font-family:var(--f-mono)}
+.pm.today .pl{display:none!important}
 /* MapLibre non arrivato dopo i tentativi: cartello in carta con il bottone per riprovare */
 .map-err{position:absolute;z-index:12;left:var(--gutter);right:var(--gutter);top:38%;max-width:420px;margin:0 auto;display:grid;gap:14px;justify-items:start;padding:18px 20px 20px;background:var(--paper);color:var(--ink);border:2px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
 .map-err[hidden]{display:none}
@@ -727,7 +791,15 @@ main{min-height:100vh}
 .zone-lbl b{font-family:var(--f-display);font-style:italic;font-weight:300;font-size:1.05rem;line-height:1.1;color:var(--ink);text-shadow:0 0 6px var(--paper),0 0 2px var(--paper),0 0 1px var(--paper)}
 .zone-lbl span{font-family:var(--f-jp);font-size:.6rem;font-weight:500;color:var(--stone);text-shadow:0 0 6px var(--paper),0 0 2px var(--paper)}
 :root[data-night="1"] .zone-lbl b{color:var(--ink);text-shadow:0 0 6px #141E35,0 0 2px #141E35}
+/* nomi delle stazioni (piano 18/10): cartografia, kanji con alone di carta, nessun fondo né bordo; non si toccano */
+.st-lbl{border:0;background:none;padding:0;margin:0;pointer-events:none;font-family:var(--f-jp);font-size:.72rem;font-weight:500;font-style:normal;line-height:1;white-space:nowrap;color:color-mix(in srgb,var(--ink) 72%,transparent);text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 3px var(--paper)}
+#map[data-z="far"] .st-lbl,#map[data-z="mid"] .st-lbl{display:none}
+.me-m{position:relative;width:22px;height:22px;pointer-events:none}
+.me-m .me-dot{position:absolute;inset:0;box-sizing:border-box}
 .me-dot{width:22px;height:22px;border-radius:50%;background:#2D7CFF;border:3px solid #fff;box-shadow:0 0 0 6px rgba(45,124,255,.25)}
+.me-in{position:absolute;inset:0}
+.me-ring{position:absolute;left:50%;top:50%;translate:-50% -50%;width:28px;height:28px;border-radius:50%;background:rgba(45,124,255,.10);border:1px solid rgba(45,124,255,.35);box-sizing:border-box;pointer-events:none}
+.me-ring[hidden]{display:none}
 
 /* sheet */
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:90;max-height:88vh;overflow:auto;overscroll-behavior:contain;background:var(--paper);border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.25);
@@ -1354,6 +1426,7 @@ svg.eki-z[data-ink="shu"]{--st-ink:var(--shu)}svg.eki-z[data-ink="prussian"]{--s
       <details class="credits-box">
         <summary data-i="credits"></summary>
         <p class="credits"><span data-i="credits.text"></span></p>
+        <p class="credits"><span data-i="credits.map"></span></p>
         <p class="credits" id="photo-credits" hidden></p>
       </details>
       <div class="signature">
@@ -1382,7 +1455,7 @@ svg.eki-z[data-ink="shu"]{--st-ink:var(--shu)}svg.eki-z[data-ink="prussian"]{--s
       <button class="tool" id="t-list" type="button" data-i="list.title"></button>
       <button class="tool" id="t-near" type="button" aria-pressed="false" data-i="filter.near"></button>
     </div>
-    <aside class="sheet msheet" id="mlist" data-open="0" aria-labelledby="mlist-title"><div id="mlist-body"></div></aside>
+    <aside class="sheet msheet" id="drawer" data-open="0" aria-labelledby="mlist-title"><button class="grab" type="button" data-ia="map.drag"></button><div class="dr-steps"></div><div class="dr-count" id="dr-count" aria-hidden="true"></div><div class="ml-head" id="ml-head"></div><div id="mlist-body"></div></aside>
   </section>
 
   <!-- TASTES -->
@@ -1401,13 +1474,13 @@ svg.eki-z[data-ink="shu"]{--st-ink:var(--shu)}svg.eki-z[data-ink="prussian"]{--s
 <div class="scrim" id="scrim"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheet-title"><div class="grab"></div><button class="sheet-x" id="sheet-x" type="button" aria-label="Chiudi">✕</button><div id="sheet-body"></div></aside>
 
-<script>window.SITE_V="66"</script>
-<script src="firebase-config.js?v=66"></script>
-<script src="share-firebase.js?v=66"></script>
-<script src="icons.js?v=66"></script>
-<script src="stamps.js?v=66"></script>
-<script src="app.js?v=66"></script>
-<script src="tastes.js?v=66"></script>
-<script src="story.js?v=66"></script>
+<script>window.SITE_V="67"</script>
+<script src="firebase-config.js?v=67"></script>
+<script src="share-firebase.js?v=67"></script>
+<script src="icons.js?v=67"></script>
+<script src="stamps.js?v=67"></script>
+<script src="app.js?v=67"></script>
+<script src="tastes.js?v=67"></script>
+<script src="story.js?v=67"></script>
 
 </body></html>

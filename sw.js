@@ -1,13 +1,13 @@
 /* Giappone 2026 — service worker della versione installabile (piano C).
-   Registrato da app.js come sw.js?v=SITE_V, solo su https e fuori da claude.ai: la versione nel nome della cache ("giappone-v66").
+   Registrato da app.js come sw.js?v=SITE_V, solo su https e fuori da claude.ai: la versione nel nome della cache ("giappone-v67").
    Strategia: rete prima per le pagine e per data/*.json (le novità arrivano subito, offline resta l'ultima copia);
    cache prima per il resto (js, geo, img, icone, tutti con ?v=). Le cache delle versioni vecchie si cancellano all'attivazione. */
 "use strict";
 const V=new URL(self.location.href).searchParams.get("v")||"0";
 const CACHE="giappone-v"+V;
 const q=u=>u+"?v="+V;
-const CORE=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","geo/stations.json",
-  ...["firebase-config.js","share-firebase.js","icons.js","stamps.js","app.js","tastes.js","story.js","map.js"].map(q),
+const CORE=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png",q("geo/stations.json"),
+  ...["firebase-config.js","share-firebase.js","icons.js","stamps.js","app.js","tastes.js","story.js","map.js","vendor/maplibre-gl.min.js"].map(q),
   ...["trip","places","zones","bases","phrases","i18n","images","apps","omikuji","lasttrain"].map(n=>q("data/"+n+".json")),
   ...["japan","wards","rail"].map(n=>q("geo/"+n+".json"))];
 self.addEventListener("install",ev=>{ev.waitUntil((async()=>{const c=await caches.open(CACHE);
@@ -26,7 +26,7 @@ async function netFirst(req){const c=await caches.open(CACHE);
 async function cacheFirst(req){const c=await caches.open(CACHE);const m=await c.match(req);if(m)return m;
   const r=await fetch(req);if(r&&r.ok&&r.type==="basic")c.put(req,r.clone());return r}
 self.addEventListener("fetch",ev=>{const req=ev.request;if(req.method!=="GET")return;const u=new URL(req.url);
-  if(u.origin!==self.location.origin)return; // font, mappa dal CDN, meteo, Firebase (gstatic, Firestore, Storage): rete normale
+  if(u.origin!==self.location.origin)return; // font, meteo, Firebase (gstatic, Firestore, Storage): rete normale
   if(u.pathname.endsWith("sw.js")||u.pathname.startsWith("/_blob/"))return; // le foto degli assaggi stanno sull'host dell'artifact
   if(req.mode==="navigate"||/\/data\/[^/]+\.json$/.test(u.pathname)){ev.respondWith(netFirst(req));return}
   ev.respondWith(cacheFirst(req))});
