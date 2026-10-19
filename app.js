@@ -675,6 +675,9 @@ async function boot(){
   measureTop();
   applyPalette();applyI18n();tick();App.initStory();
   /* chi entra direttamente in Oggi, Mappa o Assaggi trova il Racconto sotto: "indietro" non esce subito dal sito */
+  /* durante il viaggio (Tokyo, dal 3 al 19 novembre) chi apre l'app senza indirizzo arriva su Oggi; il Racconto resta sotto, a un "indietro" */
+  try{const M=App.data.trip.meta,td=tokyoParts().date,end=new Date(Date.parse(M.end+"T00:00:00Z")+864e5).toISOString().slice(0,10);
+    if(!location.hash&&td>=M.start&&td<=end)history.replaceState(history.state,"","#oggi")}catch(e){}
   try{const v0=viewFromHash();if(history.state==null){if(v0!=="story"){const h0=location.hash;history.replaceState({v:"story"},"","#racconto");history.pushState({v:v0},"",h0)}else history.replaceState({v:"story"},"")}}catch(e){}
   route();
   // REVIEW: la condivisione (db, user, assets) ora parte all'avvio e non solo aprendo Oggi: serve alla riga "Assaggiato da" della scheda del posto (vedi Problemi)
