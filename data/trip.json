@@ -407,6 +407,22 @@
    }
   },
   {
+   "id": "b-shibuya-sky",
+   "place": "shibuya-sky",
+   "date": "2026-11-06",
+   "time": "15:00",
+   "who": "all",
+   "by": "Vincenzo",
+   "label": {
+    "it": "Shibuya Sky, terrazza panoramica sul tetto (tramonto verso le 16:30)",
+    "en": "Shibuya Sky, rooftop observation deck (sunset around 16:30)"
+   },
+   "where": {
+    "it": "Shibuya, Tokyo",
+    "en": "Shibuya, Tokyo"
+   }
+  },
+  {
    "id": "b-biyori",
    "place": "sushi-biyori",
    "date": "2026-11-06",
@@ -478,14 +494,14 @@
   {
    "id": "p-shibuya-sky",
    "place": "shibuya-sky",
-   "status": "booking",
+   "status": "booked",
    "label": {
-    "it": "Shibuya Sky al tramonto, in prenotazione",
-    "en": "Shibuya Sky at sunset, booking in progress"
+    "it": "Shibuya Sky, prenotato: 6 novembre alle 15:00",
+    "en": "Shibuya Sky, booked: 6 November at 15:00"
    },
    "note": {
-    "it": "I biglietti escono 14 giorni prima e finiscono subito. Tramonto verso le 16:30. Promemoria per la prenotazione: 21 ottobre. Per la prima settimana a Tokyo.",
-    "en": "Tickets are released 14 days ahead and sell out at once. Sunset around 16:30. Booking reminder: 21 October. For the first Tokyo week."
+    "it": "Prenotato per tutto il gruppo, ingresso alle 15:00. Tramonto verso le 16:30.",
+    "en": "Booked for the whole group, entry at 15:00. Sunset around 16:30."
    },
    "reminders": [
     "2026-10-21"
@@ -788,6 +804,12 @@
     "en": "cheers"
    },
    "events": [
+    {
+     "time": "15:00",
+     "it": "Shibuya Sky, terrazza sul tetto, Shibuya",
+     "en": "Shibuya Sky, rooftop deck, Shibuya",
+     "booking": "b-shibuya-sky"
+    },
     {
      "time": "20:00",
      "it": "Sushi Biyori, omakase, Shinjuku",
